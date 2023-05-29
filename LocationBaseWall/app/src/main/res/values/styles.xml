@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="itemTextAppearanceActive">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+<!--    未选中的导航颜色一直是白色，我也不知道为什么  -->
+    <style name="itemTextAppearanceInactive">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="colorPrimary">@color/gray</item>
+        <item name="colorAccent">@color/gray</item>
+        <item name="backgroundColor">@color/slight_gray</item>
+        <item name="android:colorAccent">@color/gray</item>
+        <item name="android:colorPrimary">@color/gray</item>
+        <item name="android:colorBackground">@color/gray</item>
+        <item name="android:textColorPrimary">@color/gray</item>
+
+
+    </style>
+
+</resources>

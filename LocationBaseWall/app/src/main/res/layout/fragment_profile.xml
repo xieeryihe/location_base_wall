@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".home.ProfileFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="主页"
+                    android:textSize="@dimen/font_size_title"
+                    android:textColor="@color/black"
+                    android:gravity="start"
+
+                    />
+                <Button
+                    android:id="@+id/buttonEditProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="编辑"
+                    android:textSize="@dimen/font_size_middle_big"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/idTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:text="ID"
+                android:textSize="@dimen/font_size_middle"
+                />
+
+
+            <TextView
+                android:id="@+id/textViewUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:text="用户名"
+                android:textSize="@dimen/font_size_middle"
+                />
+
+            <EditText
+                android:id="@+id/editTextUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:hint="用户名"
+                android:inputType="text"
+                android:textSize="@dimen/font_size_middle"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/textViewEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:text="邮箱"
+                android:textSize="@dimen/font_size_middle"
+                />
+
+            <EditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:hint="邮箱"
+                android:inputType="textEmailAddress"
+                android:textSize="@dimen/font_size_middle"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/textViewPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:text="手机号"
+                android:textSize="@dimen/font_size_middle"
+                />
+
+            <EditText
+                android:id="@+id/editTextPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:hint="手机号"
+                android:inputType="phone"
+                android:textSize="@dimen/font_size_middle"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FF0000"
+            android:text="退出登录"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_middle_big"
+            tools:ignore="TextContrastCheck" />
+
+    </LinearLayout>
+
+
+
+</FrameLayout>
