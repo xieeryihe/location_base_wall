@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.locationbasewall.R;
+import com.example.locationbasewall.home.post.PostFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 

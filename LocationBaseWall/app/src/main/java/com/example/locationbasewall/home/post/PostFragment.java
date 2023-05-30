@@ -1,4 +1,4 @@
-package com.example.locationbasewall.home;
+package com.example.locationbasewall.home.post;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
