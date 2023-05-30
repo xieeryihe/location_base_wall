@@ -46,7 +46,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             super(itemView);
 
             titleTextView = itemView.findViewById(R.id.post_title);
-            contentTextView = itemView.findViewById(R.id.post_content);
+            contentTextView = itemView.findViewById(R.id.postContentText);
         }
 
         public void bind(Post post) {

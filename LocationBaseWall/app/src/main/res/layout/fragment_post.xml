@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.post.PostFragment">
+    tools:context=".home.PostFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,29 +15,50 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1">
-
-            <EditText
-                android:id="@+id/editTextTitle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="标题"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1">
 
-                />
+                <EditText
+                    android:id="@+id/postTitleEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_huge"
+                    android:hint="标题"
+                    />
 
-            <EditText
-                android:id="@+id/editTextContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="内容"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:minLines="5"
-                 />
+                <EditText
+                    android:id="@+id/postContentEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:minLines="5"
+                    android:gravity="top"/>
+
+                <ImageView
+                    android:id="@+id/postMediaImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.4"
+                    android:layout_marginTop="@dimen/common_margin"
+                    android:src="@drawable/img2"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    />
+
+<!--                如下两个属性要组合使用才能使得元素宽度自适应高度、等比例缩放-->
+<!--                android:adjustViewBounds="true"-->
+<!--                android:scaleType="fitCenter"-->
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <Button
-            android:id="@+id/buttonPost"
+            android:id="@+id/postButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
