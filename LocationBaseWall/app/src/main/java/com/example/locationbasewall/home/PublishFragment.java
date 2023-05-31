@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.locationbasewall.R;
-import com.example.locationbasewall.data.DataSender;
+import com.example.locationbasewall.utils.Location;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 public class PublishFragment extends Fragment {
     private ImageView postMediaImageView;
@@ -105,6 +107,11 @@ public class PublishFragment extends Fragment {
                 data = formatPostData(content_type, title, text, 1.2, 3.4, null);
 
             }
+
+            Location location = new Location(getContext());
+            location.getCurrentLocation();
+            Log.d("--------------------latitude",String.valueOf(location.mLatitude));
+            Log.d("--------------------longitude",String.valueOf(location.mLongitude));
 
 
 

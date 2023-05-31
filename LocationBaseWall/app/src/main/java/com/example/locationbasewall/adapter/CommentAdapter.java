@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.locationbasewall.R;
 
-import com.example.locationbasewall.data.Comment;
+import com.example.locationbasewall.utils.Comment;
 
 import java.util.List;
 

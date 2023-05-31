@@ -1,5 +1,8 @@
 package com.example.locationbasewall.home;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,8 +21,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.locationbasewall.R;
+import com.example.locationbasewall.login.LoginActivity;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     private ImageView profilePorTraitImageView;
@@ -30,6 +35,7 @@ public class ProfileFragment extends Fragment {
     private EditText editTextEmail;
     private EditText editTextPhone;
     private Button buttonEdit;
+    private Button profileLogoutButton;
 
     private boolean isEditMode = false;
 
@@ -50,6 +56,8 @@ public class ProfileFragment extends Fragment {
         editTextEmail = view.findViewById(R.id.editTextEmail);
         editTextPhone = view.findViewById(R.id.editTextPhone);
         buttonEdit = view.findViewById(R.id.buttonEditProfile);
+        profileLogoutButton = view.findViewById(R.id.profileLogoutButton);
+
 
         buttonEdit.setOnClickListener(v -> {
             if (isEditMode) {
@@ -102,6 +110,31 @@ public class ProfileFragment extends Fragment {
                 imagePickerLauncher.launch(MIME_TYPE_IMAGE);
             }
         });
+
+        // 当点击“退出登录”按钮时，清除登录信息，并退回到登录页面。
+        profileLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearLoginInfo();
+
+                // 跳转到登录页面
+                Intent intent = new Intent(requireActivity(), LoginActivity.class);
+                startActivity(intent);
+                requireActivity().finish(); // 关闭当前页面
+            }
+        });
+
         return view;
     }
+
+    private void clearLoginInfo() {
+        // 获取SharedPreferences对象
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+
+        // 清除登录信息
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
 }

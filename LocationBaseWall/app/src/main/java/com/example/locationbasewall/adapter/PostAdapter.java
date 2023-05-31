@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.locationbasewall.R;
-import com.example.locationbasewall.data.Post;
+import com.example.locationbasewall.utils.Post;
 
 import java.util.List;
 

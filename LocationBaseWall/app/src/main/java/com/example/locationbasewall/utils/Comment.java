@@ -1,4 +1,4 @@
-package com.example.locationbasewall.data;
+package com.example.locationbasewall.utils;
 public class Comment {
     private String username;
     private String ipLocation;

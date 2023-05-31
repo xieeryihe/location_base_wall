@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.adapter.PostAdapter;
-import com.example.locationbasewall.data.Post;
+import com.example.locationbasewall.utils.Post;
 
 import java.io.Serializable;
 import java.util.ArrayList;

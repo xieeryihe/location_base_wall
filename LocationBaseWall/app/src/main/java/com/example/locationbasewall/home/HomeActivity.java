@@ -1,6 +1,8 @@
 package com.example.locationbasewall.home;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -61,4 +63,23 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         });
     }
+
+    private boolean doubleBackToExitPressedOnce = false;
+
+    // 在HomeActivity上，按一次“返回”，会弹一个通知“再按一次返回到桌面”，2s内再按返回，就到桌面
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            // super.onBackPressed();
+            moveTaskToBack(true); // 将当前任务移到后台
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "再按一次返回到桌面", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+    }
+
+
+
 }

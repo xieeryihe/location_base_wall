@@ -1,4 +1,4 @@
-package com.example.locationbasewall.data;
+package com.example.locationbasewall.utils;
 
 import java.io.Serializable;
 

@@ -11,13 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="@dimen/small_margin">
+        android:layout_marginBottom="@dimen/small_margin"
+        android:layout_weight="1">
 
         <LinearLayout
             android:id="@+id/item_post"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -88,20 +90,53 @@
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/gray"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/commentsRecycleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
-<!--    下面是评论页面-->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/gray"
-        android:layout_marginBottom="@dimen/common_margin"
-        />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/commentsRecycleView"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/post_background"
+        >
+
+        <EditText
+            android:id="@+id/postDetailCommentEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:inputType="textMultiLine"
+            android:imeOptions="actionDone"
+            android:layout_weight="0.8"
+            android:visibility="visible"
+            android:hint="评论一下..."
+            />
+        <Button
+            android:id="@+id/postDetailCommentButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="发表"
+            android:visibility="gone"
+            android:layout_gravity="bottom"
+            />
+
+
+    </LinearLayout>
+
 
 
 </LinearLayout>

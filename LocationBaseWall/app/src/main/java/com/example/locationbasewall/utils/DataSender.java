@@ -1,9 +1,6 @@
-package com.example.locationbasewall.data;
-
-import androidx.annotation.NonNull;
+package com.example.locationbasewall.utils;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;

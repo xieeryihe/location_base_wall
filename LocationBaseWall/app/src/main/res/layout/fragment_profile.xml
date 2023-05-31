@@ -124,6 +124,7 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/profileLogoutButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FF0000"
