@@ -39,5 +39,7 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 
+    // implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.amap.api:location:latest.integration'
 
 }

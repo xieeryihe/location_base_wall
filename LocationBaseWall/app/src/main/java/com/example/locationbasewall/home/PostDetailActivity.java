@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationListener;
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.adapter.CommentAdapter;
 import com.example.locationbasewall.data.Comment;
@@ -29,17 +31,6 @@ public class PostDetailActivity extends AppCompatActivity {
         titleTextView = findViewById(R.id.postDetailTitleTextView);
         contentTextView = findViewById(R.id.postDetailContentTextView);
 
-        // 获取传递的数据
-        // 这块详细数据通过发送网络请求获取
-//        Intent intent = getIntent();
-//        if (intent != null) {
-//            Post post = (Post) intent.getSerializableExtra("post");
-//            if (post != null) {
-//                // 设置标题和内容
-//                titleTextView.setText(post.getTitle());
-//                contentTextView.setText(post.getContent());
-//            }
-//        }
         titleTextView.setText("标题");
         contentTextView.setText("111\n222\n333");
         List<Comment> commentList = new ArrayList<>();
@@ -52,6 +43,7 @@ public class PostDetailActivity extends AppCompatActivity {
         recyclerView.setAdapter(commentAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // TODO 获取位置信息
 
     }
 }

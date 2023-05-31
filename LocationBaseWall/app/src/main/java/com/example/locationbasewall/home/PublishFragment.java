@@ -106,6 +106,8 @@ public class PublishFragment extends Fragment {
 
             }
 
+
+
             // 发布帖子的数据
 //            String targetUrl = "http://121.43.110.176:8000/api/user/login";
 //            DataSender.sendDataToServer(data, targetUrl);

@@ -10,6 +10,7 @@
     tools:context=".login.LoginActivity"
     android:padding="@dimen/common_padding">
 
+<!--    username是手机号-->
     <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
