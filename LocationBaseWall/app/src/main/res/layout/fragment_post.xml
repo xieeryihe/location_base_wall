@@ -5,22 +5,21 @@
     android:layout_height="match_parent"
     tools:context=".home.PostFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="@dimen/common_margin">
+        >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_margin="@dimen/common_margin">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:weightSum="1">
-
+                android:layout_weight="1">
                 <EditText
                     android:id="@+id/postTitleEditText"
                     android:layout_width="match_parent"
@@ -33,40 +32,49 @@
                     android:id="@+id/postContentEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="content"
                     android:inputType="textMultiLine"
                     android:minLines="5"
                     android:gravity="top"/>
 
-                <ImageView
-                    android:id="@+id/postMediaImageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.4"
-                    android:layout_marginTop="@dimen/common_margin"
-                    android:src="@drawable/img2"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
 
-<!--                如下两个属性要组合使用才能使得元素宽度自适应高度、等比例缩放-->
-<!--                android:adjustViewBounds="true"-->
-<!--                android:scaleType="fitCenter"-->
+                    <ImageView
+                        android:id="@+id/postMediaImageView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/common_margin"
+                        android:layout_weight="0.4"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/img2" />
+                    <!--如下两个属性要组合使用才能使得元素宽度自适应高度、等比例缩放-->
+                    <!--android:adjustViewBounds="true"-->
+                    <!--android:scaleType="fitCenter"-->
+                </LinearLayout>
+
+
+
+
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/postButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:text="发表"
+                android:textSize="@dimen/font_size_middle_big" />
+
         </LinearLayout>
 
-        <Button
-            android:id="@+id/postButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-
-            android:text="发表"
-            android:textSize="@dimen/font_size_middle_big" />
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </FrameLayout>

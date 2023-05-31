@@ -69,7 +69,11 @@ public class PostFragment extends Fragment {
                                     }
                                 } else {
                                     // 是图像文件，直接显示图像
-                                    postMediaImageView.setImageURI(mediaUri);
+                                    // postMediaImageView.setImageURI(mediaUri);
+                                    Bitmap thumbnail = getImageThumbnail(mediaUri);
+                                    if (thumbnail != null) {
+                                        postMediaImageView.setImageBitmap(thumbnail);
+                                    }
                                 }
                             }
                         }
@@ -155,7 +159,6 @@ public class PostFragment extends Fragment {
             bodyJson.put("location_y", locationY);
             bodyJson.put("mediaData", mediaData);
 
-            // Create the main JSON object for the post request
             JSONObject postJson = new JSONObject();
             postJson.put("post", bodyJson);
 
@@ -200,36 +203,39 @@ public class PostFragment extends Fragment {
         }
         return null;
     }
+    private Bitmap getImageThumbnail(Uri imageUri) {
+        try {
+            Bitmap thumbnail = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+            int targetWidth = postMediaImageView.getWidth();
+            int targetHeight = postMediaImageView.getHeight();
+            return scaleAndCropBitmap(thumbnail, targetWidth, targetHeight);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     // 用于缩略图的缩放，以适应显示的大小
     private Bitmap scaleAndCropBitmap(Bitmap originalBitmap, int targetWidth, int targetHeight) {
         int width = originalBitmap.getWidth();
         int height = originalBitmap.getHeight();
 
-        // Calculate the scaling factors for width and height
         float scaleX = (float) targetWidth / width;
         float scaleY = (float) targetHeight / height;
         float scale = Math.max(scaleX, scaleY);
 
-        // Create a matrix for the scaling and cropping operations
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
 
-        // Apply the matrix to the original bitmap
         Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, true);
 
-        // Crop the scaled bitmap to match the target width and height
         int startX = (scaledBitmap.getWidth() - targetWidth) / 2;
         int startY = (scaledBitmap.getHeight() - targetHeight) / 2;
         Bitmap croppedBitmap = Bitmap.createBitmap(scaledBitmap, startX, startY, targetWidth, targetHeight);
 
-        // Recycle the original and scaled bitmaps
         originalBitmap.recycle();
         scaledBitmap.recycle();
 
         return croppedBitmap;
     }
 
-
-    // Other methods for posting the data and handling UI interactions
 }
