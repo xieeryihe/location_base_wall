@@ -1,7 +1,10 @@
 package com.example.locationbasewall.data;
 
+import java.io.Serializable;
+
 // 帖子类
-public class Post {
+// 实现序列化接口，便于数据传递
+public class Post implements Serializable {
     private String title;
     private String content;
 

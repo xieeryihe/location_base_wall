@@ -26,25 +26,17 @@
 
         <!-- 用户名 -->
         <EditText
-            android:id="@+id/usernameEditText"
+            android:id="@+id/registerUsernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:paddingBottom="@dimen/common_padding"
             android:hint="用户名" />
 
-        <!-- ID -->
-        <EditText
-            android:id="@+id/idEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:paddingBottom="@dimen/common_padding"
-            android:hint="ID" />
 
         <!-- 邮箱 -->
         <EditText
-            android:id="@+id/emailEditText"
+            android:id="@+id/registerEmailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
@@ -53,38 +45,13 @@
 
         <!-- 手机号 -->
         <EditText
-            android:id="@+id/edit_phone"
+            android:id="@+id/registerPhoneEditView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
             android:paddingBottom="@dimen/common_padding"
             android:hint="手机号"
             />
-
-        <!-- 管理员选项 -->
-        <RadioGroup
-            android:id="@+id/radioGroupAdmin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/common_padding">
-
-            <RadioButton
-                android:id="@+id/radioAdminNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="否"
-                android:checked="true" />
-
-            <RadioButton
-                android:id="@+id/radioAdminYes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="是" />
-
-        </RadioGroup>
 
     </LinearLayout>
 

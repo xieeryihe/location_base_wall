@@ -20,25 +20,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-
-                android:gravity="center_vertical">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:weightSum="1">
+<!--                TODO 这里加个头像，回头选图像的时候就裁剪，这样显示的图像就是目标大小（长宽一样）-->
+                <ImageView
+                    android:id="@+id/profilePortraitImageView"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="主页"
-                    android:textSize="@dimen/font_size_title"
-                    android:textColor="@color/black"
-                    android:gravity="start"
-
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.2"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/img2"
                     />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    >
+
+                </View>
                 <Button
                     android:id="@+id/buttonEditProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="编辑"
                     android:textSize="@dimen/font_size_middle_big"
-                    android:gravity="center"/>
+                    android:gravity="center"
+
+                    />
 
             </LinearLayout>
 

@@ -15,16 +15,22 @@ import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private List<Post> postList;
+    private OnItemClickListener onItemClickListener;
 
-    public PostAdapter(List<Post> postList) {
+    public interface OnItemClickListener {
+        void onItemClick(Post post);
+    }
+
+    public PostAdapter(List<Post> postList, OnItemClickListener onItemClickListener) {
         this.postList = postList;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
-        return new PostViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post_overview, parent, false);
+        return new PostViewHolder(view, this.onItemClickListener);
     }
 
     @Override
@@ -38,20 +44,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return postList.size();
     }
 
-    public class PostViewHolder extends RecyclerView.ViewHolder {
+    public class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView titleTextView;
         private TextView contentTextView;
+        private OnItemClickListener onItemClickListener;
 
-        public PostViewHolder(@NonNull View itemView) {
+        public PostViewHolder(@NonNull View itemView, OnItemClickListener onItemClickListener) {
             super(itemView);
 
             titleTextView = itemView.findViewById(R.id.post_title);
             contentTextView = itemView.findViewById(R.id.postContentText);
+            this.onItemClickListener = onItemClickListener;
+
+            // 设置点击事件监听器
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Post post) {
             titleTextView.setText(post.getTitle());
             contentTextView.setText(post.getContent());
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                Post post = postList.get(position);
+                onItemClickListener.onItemClick(post);
+            }
         }
     }
 }

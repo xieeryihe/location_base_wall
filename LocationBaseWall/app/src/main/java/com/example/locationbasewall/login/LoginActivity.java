@@ -5,11 +5,16 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.locationbasewall.R;
+import com.example.locationbasewall.data.DataSender;
 import com.example.locationbasewall.home.HomeActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,20 +39,38 @@ public class LoginActivity extends AppCompatActivity {
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
 
-            // 在这里执行登录逻辑，可以与服务器进行交互验证用户名和密码
-            // Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+            // 创建一个 JSON 对象并添加所需的属性
+            JSONObject json = new JSONObject();
+            JSONObject schema = new JSONObject();
+            JSONObject properties = new JSONObject();
+
+            try {
+                properties.put("username", username);
+                properties.put("password", password);
+                schema.put("type", "object");
+                schema.put("properties", properties);
+                json.put("schema", schema);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            String jsonString = json.toString();
+
+//            String targetUrl = "http://121.43.110.176:8000/api/user/login";
+//            DataSender.sendDataToServer(jsonString, targetUrl);
+
+
+            DataSender.sendTest();
+
+            // 创建并显示 Toast
+            Toast.makeText(LoginActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+
+            // 在点击事件监听器中
+
 
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
 
-//                if (username.equals("admin") && password.equals("password")) {
-//                    // 登录成功，跳转到主页或下一个页面
-//                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-//                    // 进行页面跳转等操作
-//                } else {
-//                    // 登录失败，显示错误消息
-//                    Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
-//                }
         });
 
         noAccountTextView.setOnClickListener(v -> {

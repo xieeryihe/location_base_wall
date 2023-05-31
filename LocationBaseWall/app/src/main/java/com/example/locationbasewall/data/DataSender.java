@@ -1,42 +1,87 @@
 package com.example.locationbasewall.data;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import androidx.annotation.NonNull;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class DataSender {
-    private static final String serverUrl = "aaa";
-    public static void sendDataToServer(String data) {
-        try {
-            // 创建连接
-            URL url = new URL(serverUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
+    private static String serverUrl = "http://121.43.110.176:8000/";
 
-            // 发送数据
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(data.getBytes(StandardCharsets.UTF_8));
-            outputStream.flush();
-            outputStream.close();
+    public static void sendTest() {
+        Thread thread = new Thread(() -> {
+            OkHttpClient client = new OkHttpClient();
 
-            // 获取响应
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                // 数据发送成功
-                // 可以根据需要处理响应数据
-            } else {
-                // 数据发送失败
-                // 可以根据需要处理失败情况
+            Request request = new Request.Builder()
+                    .url("http://121.43.110.176:8000/hello/")
+                    .build();
+
+            try {
+                Response response = client.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    // 请求成功，可以获取响应数据
+                    String responseData = response.body().string();
+                    // 在这里处理响应数据
+                } else {
+                    // 请求失败
+                    // 在这里处理错误情况
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
+    }
+
+
+    public static void sendDataToServer(String data, String url) {
+
+
+        // 创建一个 OkHttpClient 实例
+        OkHttpClient client = new OkHttpClient();
+
+        // 设置请求体的媒体类型为 application/json
+        MediaType mediaType = MediaType.parse("application/json");
+
+        // 创建请求体
+        RequestBody requestBody = RequestBody.create(mediaType, data);
+
+        // 创建 POST 请求
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        // 发送请求并处理响应
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
             }
 
-            // 断开连接
-            connection.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    // 请求成功
+                    String responseBody = response.body().string();
+                    System.out.println(responseBody);
+                } else {
+                    // 请求失败
+                    System.out.println("Request failed: " + response.code());
+                }
+            }
+        });
     }
 }
 

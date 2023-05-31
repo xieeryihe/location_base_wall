@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_main"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/common_padding"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/slight_gray">
-
+    android:background="@drawable/post_background"
+    android:layout_marginBottom="@dimen/small_margin"
+    >
+    <!--注意一定是wrap_content，否则就是一个元素占满整个屏幕，结果就是值显示一个元素-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,14 +28,13 @@
                 >
 
                 <ImageView
-                    android:id="@+id/postDetailImageView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.12"
                     android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ding_zhen" />
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/img2" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -42,25 +42,22 @@
                     android:orientation="vertical"
                     android:layout_weight="0.88"
                     android:weightSum="1">
-
                     <TextView
-                        android:id="@+id/postDetailUsername"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:gravity="center_vertical"
-                        android:paddingStart="@dimen/common_margin"
-                        android:text="丁真"
-                        android:textSize="@dimen/font_size_middle_big" />
-
-                    <TextView
-                        android:id="@+id/postDetailIP"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/common_margin"
                         android:layout_weight="0.5"
-                        android:text="IP属地：妈妈"
-                        android:textSize="@dimen/font_size_middle_big"
+                        android:text="username"
+                        android:textSize="@dimen/font_size_middle"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/common_margin"
+                        android:layout_weight="0.5"
+                        android:text="IP属地"
+                        android:textSize="@dimen/font_size_middle"
                         android:gravity="center_vertical"/>
                 </LinearLayout>
 
@@ -68,7 +65,7 @@
 
             </LinearLayout>
             <TextView
-                android:id="@+id/postDetailTitleTextView"
+                android:id="@+id/post_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/common_margin"
@@ -76,7 +73,7 @@
                 android:text="title"
                 android:textStyle="bold"/>
             <TextView
-                android:id="@+id/postDetailContentTextView"
+                android:id="@+id/postContentText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/common_margin"
@@ -89,19 +86,9 @@
         </LinearLayout>
 
     </LinearLayout>
-
-<!--    下面是评论页面-->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/gray"
-        android:layout_marginBottom="@dimen/common_margin"
-        />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/commentsRecycleView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1dp"-->
+<!--        android:background="@color/teal_200"/>-->
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.locationbasewall.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import com.example.locationbasewall.R;
 import com.example.locationbasewall.adapter.PostAdapter;
 import com.example.locationbasewall.data.Post;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,13 @@ public class NearbyFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         postList = new ArrayList<>(); // 初始化帖子数据列表
-        postAdapter = new PostAdapter(postList); // 创建帖子适配器，并传入帖子数据列表
+        postAdapter = new PostAdapter(postList, post -> {
+            // 处理点击事件，跳转到详情页或执行其他操作
+            // 在此处启动 PostDetailActivity，并传递帖子数据
+            Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+            intent.putExtra("post", (Serializable) post);
+            startActivity(intent);
+        });
         recyclerView.setAdapter(postAdapter);
 
         // 添加示例帖子数据到帖子数据列表

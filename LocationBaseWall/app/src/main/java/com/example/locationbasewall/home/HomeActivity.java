@@ -42,7 +42,7 @@ public class HomeActivity extends AppCompatActivity {
                     selectedFragment = new NearbyFragment();
                     break;
                 case R.id.navigation_post:
-                    selectedFragment = new PostFragment();
+                    selectedFragment = new PublishFragment();
                     break;
                 case R.id.navigation_profile:
                     selectedFragment = new ProfileFragment();

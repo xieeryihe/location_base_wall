@@ -31,9 +31,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 
-public class PostFragment extends Fragment {
+public class PublishFragment extends Fragment {
     private ImageView postMediaImageView;
     private EditText postTitleEditText;
     private EditText postContentEditText;
@@ -46,7 +45,7 @@ public class PostFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_post, container, false);
+        View view = inflater.inflate(R.layout.fragment_publish, container, false);
 
         postMediaImageView = view.findViewById(R.id.postMediaImageView);
         postTitleEditText = view.findViewById(R.id.postTitleEditText);
@@ -106,7 +105,10 @@ public class PostFragment extends Fragment {
                 data = formatPostData(content_type, title, text, 1.2, 3.4, null);
 
             }
-            DataSender.sendDataToServer(data);
+
+            // 发布帖子的数据
+//            String targetUrl = "http://121.43.110.176:8000/api/user/login";
+//            DataSender.sendDataToServer(data, targetUrl);
         });
 
 
