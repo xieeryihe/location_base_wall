@@ -110,8 +110,8 @@ public class PublishFragment extends Fragment {
 
             Location location = new Location(getContext());
             location.getCurrentLocation();
-            Log.d("--------------------latitude",String.valueOf(location.mLatitude));
-            Log.d("--------------------longitude",String.valueOf(location.mLongitude));
+            double l = location.getLatitude();
+            System.out.println(l);
 
 
 

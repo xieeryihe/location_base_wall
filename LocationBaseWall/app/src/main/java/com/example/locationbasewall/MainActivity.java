@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             if (aMapLocation.getErrorCode() == 0) {
                 //地址
                 String address = aMapLocation.getAddress();
-                System.out.println(address);
+                // System.out.println(address);
 
                 //停止定位后，本地定位服务并不会被销毁
                 // mLocationClient.stopLocation();
