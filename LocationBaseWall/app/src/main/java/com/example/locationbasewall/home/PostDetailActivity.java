@@ -81,8 +81,19 @@ public class PostDetailActivity extends AppCompatActivity {
                 // TODO 发送评论数据
 
 
+
                 // 重置评论框
                 postDetailCommentEditText.setText("");
+
+                // TODO 刷新评论页面
+
+                commentList.add(new Comment("User4", "Location4", "Comment 4", 3.456, 7.890, "https://example.com/avatar3.png"));
+
+                // 刷新适配器
+                commentAdapter.notifyItemInserted(commentList.size() - 1);
+                // 滚动到最后一个评论
+                recyclerView.scrollToPosition(commentList.size() - 1);
+
             }
         });
 

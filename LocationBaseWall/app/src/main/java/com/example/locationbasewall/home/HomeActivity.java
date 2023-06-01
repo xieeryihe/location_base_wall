@@ -27,7 +27,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // 设置默认的 HomeFragment
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.home_content, new HomeFragment());
+        fragmentTransaction.replace(R.id.homeContentFragment, new HomeFragment());
         fragmentTransaction.commit();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -38,25 +38,34 @@ public class HomeActivity extends AppCompatActivity {
             // TODO 当然，PostFragment中可以加一个清除数据的按钮（后面再说）
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    selectedFragment = new HomeFragment();
+                    selectedFragment = getSupportFragmentManager().findFragmentByTag("home");
+                    if (selectedFragment == null) {
+                        selectedFragment = new HomeFragment();
+                    }
                     break;
                 case R.id.navigation_nearby:
-                    selectedFragment = new NearbyFragment();
+                    selectedFragment = getSupportFragmentManager().findFragmentByTag("nearby");
+                    if (selectedFragment == null) {
+                        selectedFragment = new NearbyFragment();
+                    }
                     break;
                 case R.id.navigation_post:
-                    selectedFragment = new PublishFragment();
+                    selectedFragment = getSupportFragmentManager().findFragmentByTag("publish");
+                    if (selectedFragment == null) {
+                        selectedFragment = new PublishFragment();
+                    }
                     break;
                 case R.id.navigation_profile:
-                    selectedFragment = new ProfileFragment();
+                    selectedFragment = getSupportFragmentManager().findFragmentByTag("profile");
+                    if (selectedFragment == null) {
+                        selectedFragment = new ProfileFragment();
+                    }
                     break;
-
-                // 添加其他项目的处理
-
             }
 
             if (selectedFragment != null) {
                 FragmentTransaction fragmentTransaction1 = fragmentManager.beginTransaction();
-                fragmentTransaction1.replace(R.id.home_content, selectedFragment);
+                fragmentTransaction1.replace(R.id.homeContentFragment, selectedFragment);
                 fragmentTransaction1.commit();
             }
 

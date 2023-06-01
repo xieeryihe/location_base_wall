@@ -26,6 +26,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    // 刷新高德的jar包
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
 }
 
 dependencies {
@@ -39,7 +46,9 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 
-    // implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.amap.api:location:latest.integration'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // implementation 'com.amap.api:location:latest.integration'
+
+    implementation 'pub.devrel:easypermissions:3.0.0'
 
 }

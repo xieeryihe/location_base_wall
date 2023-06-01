@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/common_padding"
         android:hint="手机号"
+        android:text="1231231231"
         android:inputType="phone"/>
 
     <EditText
@@ -25,21 +26,25 @@
         android:layout_height="wrap_content"
         android:hint="密码"
         android:paddingBottom="@dimen/common_padding"
+        android:text="admin"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/small_margin"
+        android:layout_marginTop="@dimen/common_margin"
+        android:textSize="@dimen/font_size_middle_big"
         android:text="登录" />
 
     <TextView
         android:id="@+id/noAccountTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/blue"
+        android:layout_marginTop="@dimen/common_margin"
         android:text = "没有账号"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/font_size_middle"
         android:gravity="center"
         />
 

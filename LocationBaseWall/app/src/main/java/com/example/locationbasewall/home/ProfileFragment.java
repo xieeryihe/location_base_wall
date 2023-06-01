@@ -1,5 +1,6 @@
 package com.example.locationbasewall.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -116,11 +117,14 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 clearLoginInfo();
-
+                Activity profileActivity = getActivity();
                 // 跳转到登录页面
-                Intent intent = new Intent(requireActivity(), LoginActivity.class);
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
-                requireActivity().finish(); // 关闭当前页面
+                if (profileActivity != null) {
+                    profileActivity.finish();
+                }
+
             }
         });
 
