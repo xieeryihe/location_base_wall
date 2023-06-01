@@ -62,7 +62,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         public void bind(Post post) {
             titleTextView.setText(post.getTitle());
-            contentTextView.setText(post.getContent());
+            contentTextView.setText(post.getText());
         }
 
         @Override

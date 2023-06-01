@@ -33,6 +33,15 @@
             android:paddingBottom="@dimen/common_padding"
             android:hint="用户名" />
 
+        <!-- 密码 -->
+        <EditText
+            android:id="@+id/registerPasswordEditView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:paddingBottom="@dimen/common_padding"
+            android:hint="密码"
+            />
 
         <!-- 邮箱 -->
         <EditText

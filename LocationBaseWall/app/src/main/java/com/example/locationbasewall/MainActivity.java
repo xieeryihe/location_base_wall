@@ -4,12 +4,15 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -33,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
 
+    // 内存权限
+    private static final int REQUEST_PERMISSION_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         // 初始化定位
         initLocation();
         requestPermission();
+
+        // 获取存储权限
+        requestStoragePermission();
 
 
         LinearLayout mainLayout = findViewById(R.id.layout_main);
@@ -155,6 +163,19 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         super.onDestroy();
         //销毁定位客户端，同时销毁本地定位服务。
         mLocationClient.onDestroy();
+    }
+
+
+
+    // 在合适的位置调用该方法来请求权限
+    private void requestStoragePermission() {
+        // 如果未获得权限
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_CODE);
+        }
     }
 
 }

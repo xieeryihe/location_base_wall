@@ -42,16 +42,15 @@ public class HomeFragment extends Fragment {
                 // 处理点击事件，跳转到详情页或执行其他操作
                 // 在此处启动 PostDetailActivity，并传递帖子数据
                 Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-                intent.putExtra("post", (Serializable) post);
                 startActivity(intent);
             }
         });
         recyclerView.setAdapter(postAdapter);
 
         // 添加示例帖子数据到帖子数据列表
-        postList.add(new Post("帖子标题1", "帖子内容1"));
-        postList.add(new Post("帖子标题2", "帖子内容2"));
-        postList.add(new Post("帖子标题3", "帖子内容3"));
+        postList.add(new Post("1", "user123", "帖子标题1", "帖子内容1", 1, 12.345, 67.890, null, "New York"));
+        postList.add(new Post("2", "user456", "帖子标题2", "帖子内容2", 2, 34.567, 89.012, null, "Paris"));
+        postList.add(new Post("3", "user789", "帖子标题3", "帖子内容3", 1, 56.789, 90.123, null, "默认地址"));
         // ...
 
         // 通知适配器数据集发生变化

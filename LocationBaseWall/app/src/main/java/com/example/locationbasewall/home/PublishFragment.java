@@ -1,11 +1,15 @@
 package com.example.locationbasewall.home;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -19,17 +23,30 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.example.locationbasewall.R;
+import com.example.locationbasewall.login.LoginActivity;
+import com.example.locationbasewall.utils.DataSender;
+import com.example.locationbasewall.utils.LocalUserInfo;
 import com.example.locationbasewall.utils.Location;
+import com.example.locationbasewall.utils.MyToast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Objects;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class PublishFragment extends Fragment {
     private ImageView postMediaImageView;
@@ -38,7 +55,7 @@ public class PublishFragment extends Fragment {
     private Button postButton;
 
     private Uri mediaUri;
-    private int content_type = 0;
+    private int mContentType = 0;
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     @Nullable
@@ -50,6 +67,7 @@ public class PublishFragment extends Fragment {
         postTitleEditText = view.findViewById(R.id.postTitleEditText);
         postContentEditText = view.findViewById(R.id.postContentEditText);
         postButton = view.findViewById(R.id.postButton);
+
 
         // Initialize the ActivityResultLauncher
         galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -84,31 +102,116 @@ public class PublishFragment extends Fragment {
         postButton.setOnClickListener(v -> {
             String title = postTitleEditText.getText().toString();
             String text = postContentEditText.getText().toString();
-            String data;
 
+
+
+            byte[] mediaData;
             // Check post mode based on media selection
             if (mediaUri != null) {
                 // Rich text mode
-                content_type = 1;
+                mContentType = 1;
                 // 获取媒体数据
-                byte[] mediaData = isVideoFile(mediaUri) ? getVideoData(mediaUri) : getImageData(mediaUri);
+                mediaData = isVideoFile(mediaUri) ? getVideoData(mediaUri) : getImageData(mediaUri);
                 // 整理成需要的数据格式
-                data = formatPostData(content_type, title, text, 1.2, 3.4, mediaData);
 
             } else {
                 // Plain text mode
-                content_type = 0;
-                // 整理成需要的数据格式
-                data = formatPostData(content_type, title, text, 1.2, 3.4, null);
-
+                mContentType = 0;
+                mediaData = null;
             }
 
             Location location = new Location(getContext());
             location.getCurrentLocation(new Location.LocationCallback() {
                 @Override
-                public void onLocationReceived(double latitude, double longitude, String address) {
+                public void onLocationReceived(double latitude, double longitude, String province, String city, String address) {
                     System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
                     System.out.println(address);
+
+                    LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
+                    String uid = localUserInfo.getId();
+
+
+                    // 获取地理位置之后才能发送完整数据
+                    String targetUrl = "http://121.43.110.176:8000/api/post";
+
+                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                    String mediaUriStorage = getImagePathFromUri(getContext(), mediaUri);
+
+                    System.out.println("------------------media");
+                    System.out.println(mediaUri);
+                    System.out.println(mediaUriStorage);
+                    File file = new File(mediaUriStorage);
+                    // 添加图片部分
+                    String fieldName = "image";  // 字段名
+                    String fileName = file.getName();  // 文件名
+
+                    MultipartBody.Part multipartBodyPart = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                        try {
+                            multipartBodyPart = buildMultipartBodyPart(getContext(), mediaUri, fieldName, fileName);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    // 将 multipartBodyPart 添加到 MultipartBody.Builder 中
+                    if (multipartBodyPart != null) {
+                        builder.addPart(multipartBodyPart);
+                    }
+
+                    // 添加其他字段
+                    builder.addFormDataPart("uid", uid);
+
+                    RequestBody requestBody = builder.build();
+
+                    DataSender.sendDataToServer(requestBody, targetUrl, new DataSender.DataSenderCallback() {
+                        @Override
+                        public void onSuccess(JSONObject jsonObject) {
+                            // 网络请求成功
+                            try {
+                                int code = jsonObject.getInt("code");
+                                String errorMsg = jsonObject.getString("error_msg");
+                                JSONObject data = jsonObject.getJSONObject("data");
+
+                                if (code != 0){
+                                    // 登录失败
+                                    String msg = "error code:" + code + "\nerror_msg" + errorMsg;
+                                    MyToast.show(getContext(),msg);
+
+                                } else {
+                                    // 登录成功
+                                    MyToast.show(getContext(), "登录成功");
+                                    // 提取data中的字段
+                                    String uid = data.getString("uid");
+                                    String email = data.getString("email");
+                                    String phonenum = data.getString("phonenum");
+                                    String username = data.getString("username");
+                                    String pictureUrl = data.getString("picture");  // 注意，这个是图片网络路径
+
+                                    // 登录成功才要保存用户信息
+                                    LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
+                                    localUserInfo.saveUserInfo(username,uid,email,phonenum,pictureUrl);
+
+                                    localUserInfo.showUserInfo();
+
+//                            finish(); // 销毁当前活动（登录活动）
+
+                                    // 启动新活动
+                                    Intent intent = new Intent(getContext(), HomeActivity.class);
+                                    startActivity(intent);
+                                }
+                            } catch (JSONException e) {
+                                MyToast.show(getContext(), "JSON错误");
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            System.out.println(errorMessage);
+                            MyToast.show(getContext(), "网络请求错误");
+                        }
+                    });
                 }
 
                 @Override
@@ -123,9 +226,23 @@ public class PublishFragment extends Fragment {
 //            DataSender.sendDataToServer(data, targetUrl);
         });
 
-
         return view;
     }
+
+    // 获取图像数据
+    private byte[] getImageData(Uri imageUri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     // 获取视频数据
     private byte[] getVideoData(Uri videoUri) {
         try {
@@ -146,19 +263,7 @@ public class PublishFragment extends Fragment {
         return null;
     }
 
-    // 获取图像数据
-    private byte[] getImageData(Uri imageUri) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return null;
-    }
 
     // 生成所需的目标数据
     // TODO 具体需要的数据有哪些还没确定
@@ -252,4 +357,49 @@ public class PublishFragment extends Fragment {
         return croppedBitmap;
     }
 
+    private String getImagePathFromUri(Context context, Uri uri) {
+        String imagePath = null;
+        if (uri != null) {
+            ContentResolver contentResolver = context.getContentResolver();
+            Cursor cursor = contentResolver.query(uri, null, null, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                    if (columnIndex != -1) {
+                        imagePath = cursor.getString(columnIndex);
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return imagePath;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private RequestBody getFileRequestBody(Context context, Uri uri) throws IOException {
+        ContentResolver contentResolver = context.getContentResolver();
+        String mimeType = contentResolver.getType(uri);
+        InputStream inputStream = contentResolver.openInputStream(uri);
+
+        byte[] fileBytes = readBytes(inputStream);
+
+        return RequestBody.create(MediaType.get(mimeType), fileBytes);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private byte[] readBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, bytesRead);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    private MultipartBody.Part buildMultipartBodyPart(Context context, Uri uri, String fieldName, String fileName) throws IOException {
+        RequestBody fileBody = getFileRequestBody(context, uri);
+        return MultipartBody.Part.createFormData(fieldName, fileName, fileBody);
+    }
 }

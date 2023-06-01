@@ -39,16 +39,12 @@ public class NearbyFragment extends Fragment {
             // 处理点击事件，跳转到详情页或执行其他操作
             // 在此处启动 PostDetailActivity，并传递帖子数据
             Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-            intent.putExtra("post", (Serializable) post);
             startActivity(intent);
         });
         recyclerView.setAdapter(postAdapter);
 
-        // 添加示例帖子数据到帖子数据列表
-        postList.add(new Post("帖子标题4", "帖子内容4"));
-        postList.add(new Post("帖子标题5", "帖子内容5"));
-        postList.add(new Post("帖子标题6", "帖子内容6"));
-        // ...
+        postList.add(new Post("4", "user111", "帖子标题4", "帖子内容4", 2, 78.901, 23.456, null, "London"));
+        postList.add(new Post("5", "user222", "帖子标题5", "帖子内容5", 1, 98.765, 43.210, null, "默认地址"));
 
         // 通知适配器数据集发生变化
         postAdapter.notifyDataSetChanged();

@@ -76,11 +76,9 @@ public class DataSender {
             }
         });
     }
-    public static void sendDataToServer2(RequestBody requestBody, String url, final DataSenderCallback callback) {
+    public static void sendDataToServer(RequestBody requestBody, String url, final DataSenderCallback callback) {
 
         OkHttpClient client = new OkHttpClient();
-        System.out.println("-----------------------------request");
-        // System.out.println(requestBody.toString());
         // 创建请求对象
         Request request = new Request.Builder()
                 .url(url)

@@ -18,6 +18,8 @@ public class Location {
     private double mLatitude;
     private double mLongitude;
     private String mAddress;
+    private String mProvince;
+    private String mCity;
 
     public Location(Context context) {
         this.mContext = context;
@@ -49,11 +51,12 @@ public class Location {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
                 if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
-                    mLatitude = aMapLocation.getLatitude();
-                    mLongitude = aMapLocation.getLongitude();
-                    mAddress = aMapLocation.getAddress();
-
-                    callback.onLocationReceived(mLatitude, mLongitude, mAddress);
+                    mLatitude = aMapLocation.getLatitude();  // 维度
+                    mLongitude = aMapLocation.getLongitude();  // 经度
+                    mAddress = aMapLocation.getAddress();  // 详细地址
+                    mProvince = aMapLocation.getProvince(); //省
+                    mCity = aMapLocation.getCity(); //城市
+                    callback.onLocationReceived(mLatitude, mLongitude, mProvince, mCity, mAddress);
                 } else {
                     String errorMsg = "Failed to get location. Error code: ";
                     if (aMapLocation != null) {
@@ -74,7 +77,7 @@ public class Location {
     }
 
     public interface LocationCallback {
-        void onLocationReceived(double latitude, double longitude, String address);
+        void onLocationReceived(double latitude, double longitude,String province, String city, String address);
 
         void onLocationFailed(String errorMsg);
     }

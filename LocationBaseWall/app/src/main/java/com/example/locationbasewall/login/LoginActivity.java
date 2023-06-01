@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.home.HomeActivity;
 import com.example.locationbasewall.utils.DataSender;
+import com.example.locationbasewall.utils.LocalUserInfo;
 import com.example.locationbasewall.utils.MyToast;
 
 import org.json.JSONException;
@@ -61,26 +62,19 @@ public class LoginActivity extends AppCompatActivity {
 //            System.out.println("------------------------------");
 //            System.out.println(jsonString);
 
-            String targetUrl = "http://121.43.110.176:8000/api/user/login/";
+            String targetUrl = "http://121.43.110.176:8000/api/user/login";
             RequestBody requestBody = new FormBody.Builder()
-                    .add("username",username)
+                    .add("userName",username)
                     .add("password",password)
                     .build();
-//            DataSender.sendDataToServer(jsonString, targetUrl, new DataSender.DataSenderCallback() {
-            DataSender.sendDataToServer2(requestBody, targetUrl, new DataSender.DataSenderCallback() {
+            DataSender.sendDataToServer(requestBody, targetUrl, new DataSender.DataSenderCallback() {
                 @Override
                 public void onSuccess(JSONObject jsonObject) {
-                    // 在这里处理成功的响应数据
-                    // 您可以使用 jsonObject 进行检查操作
+                    // 网络请求成功
                     try {
                         int code = jsonObject.getInt("code");
                         String errorMsg = jsonObject.getString("error_msg");
                         JSONObject data = jsonObject.getJSONObject("data");
-
-                        // 提取data中的字段
-                        String uid = data.getString("uid");
-                        String username = data.getString("username");
-                        String picture = data.getString("picture");
 
                         if (code != 0){
                             // 登录失败
@@ -88,19 +82,29 @@ public class LoginActivity extends AppCompatActivity {
                             MyToast.show(LoginActivity.this,msg);
 
                         } else {
+                            // 登录成功
                             MyToast.show(LoginActivity.this, "登录成功");
-                            // 登录成功才要保存用户信息
-                            saveUserInfo(username);
+                            // 提取data中的字段
+                            String uid = data.getString("uid");
+                            String email = data.getString("email");
+                            String phonenum = data.getString("phonenum");
+                            String username = data.getString("username");
+                            String pictureUrl = data.getString("picture");  // 注意，这个是图片网络路径
 
-                            finish(); // 销毁当前活动（登录活动）
+                            // 登录成功才要保存用户信息
+                            LocalUserInfo localUserInfo = new LocalUserInfo(getApplicationContext());
+                            localUserInfo.saveUserInfo(username,uid,email,phonenum,pictureUrl);
+
+                            localUserInfo.showUserInfo();
+
+//                            finish(); // 销毁当前活动（登录活动）
 
                             // 启动新活动
-//                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-//                            startActivity(intent);
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);
                         }
                     } catch (JSONException e) {
                         MyToast.show(LoginActivity.this, "JSON错误");
-
                         e.printStackTrace();
                     }
 
@@ -114,8 +118,8 @@ public class LoginActivity extends AppCompatActivity {
             });
 
             // TODO 登录逻辑修好之后这块要删除
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//            startActivity(intent);
         });
 
         // 没有账号？跳转到注册页
@@ -126,14 +130,5 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-    }
-    private void saveUserInfo(String phonenum) {
-        // 使用SharedPreferences.Editor来写入数据
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLogin", true);
-        editor.putString("phonenum", phonenum);
-        // TODO 这里要把：头像、昵称、ID、密码、手机号，都保存，然后用户查看个人信息的时候就不用向服务器发数据了
-        // 或者就不保存任何信息（只保存登录的手机号），然后用户查看个人主页的时候向服务器发信息
-        editor.apply();
     }
 }

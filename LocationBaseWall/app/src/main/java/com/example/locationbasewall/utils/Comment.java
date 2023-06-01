@@ -1,27 +1,31 @@
 package com.example.locationbasewall.utils;
 public class Comment {
+    private String id;  // 评论id
+    private String uid;  // 评论者的账户id
+    private String content_type;  // 评论类型
+
     private String username;
-    private String ipLocation;
+    private String ip;
     private String content;
     private double locationX;
     private double locationY;
-    private String portraitUrl;
+    private String imageUrl;
 
-    public Comment(String username, String ipLocation, String content, double locationX, double locationY, String portraitUrl) {
+    public Comment(String username, String ip, String content, double locationX, double locationY, String imageUrl) {
         this.username = username;
-        this.ipLocation = ipLocation;
+        this.ip = ip;
         this.content = content;
         this.locationX = locationX;
         this.locationY = locationY;
-        this.portraitUrl = portraitUrl;
+        this.imageUrl = imageUrl;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public String getIpLocation() {
-        return ipLocation;
+    public String getIp() {
+        return ip;
     }
 
     public String getContent() {
@@ -36,7 +40,7 @@ public class Comment {
         return locationY;
     }
 
-    public String getPortraitUrl() {
-        return portraitUrl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 }
