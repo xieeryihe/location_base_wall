@@ -77,7 +77,7 @@ public class Location {
     }
 
     public interface LocationCallback {
-        void onLocationReceived(double latitude, double longitude,String province, String city, String address);
+        void onLocationReceived(double latitude, double longitude, String province, String city, String address);
 
         void onLocationFailed(String errorMsg);
     }

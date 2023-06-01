@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         requestPermission();
 
         // 获取存储权限
-        requestStoragePermission();
+        // requestStoragePermission();
 
 
         LinearLayout mainLayout = findViewById(R.id.layout_main);

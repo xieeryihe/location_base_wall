@@ -125,6 +125,8 @@ public class PublishFragment extends Fragment {
                 @Override
                 public void onLocationReceived(double latitude, double longitude, String province, String city, String address) {
                     System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
+                    System.out.println(province);
+                    System.out.println(city);
                     System.out.println(address);
 
                     LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
@@ -142,7 +144,7 @@ public class PublishFragment extends Fragment {
                     System.out.println(mediaUriStorage);
                     File file = new File(mediaUriStorage);
                     // 添加图片部分
-                    String fieldName = "image";  // 字段名
+                    String fieldName = "media";  // 字段名
                     String fileName = file.getName();  // 文件名
 
                     MultipartBody.Part multipartBodyPart = null;
@@ -161,7 +163,12 @@ public class PublishFragment extends Fragment {
 
                     // 添加其他字段
                     builder.addFormDataPart("uid", uid);
-
+                    builder.addFormDataPart("title", title);
+                    builder.addFormDataPart("text", text);
+                    builder.addFormDataPart("content_type",String.valueOf(mContentType));
+                    builder.addFormDataPart("location_x", String.valueOf(longitude));
+                    builder.addFormDataPart("location_y", String.valueOf(latitude));
+                    builder.addFormDataPart("ip_address",address);
                     RequestBody requestBody = builder.build();
 
                     DataSender.sendDataToServer(requestBody, targetUrl, new DataSender.DataSenderCallback() {
@@ -171,26 +178,19 @@ public class PublishFragment extends Fragment {
                             try {
                                 int code = jsonObject.getInt("code");
                                 String errorMsg = jsonObject.getString("error_msg");
-                                JSONObject data = jsonObject.getJSONObject("data");
-
+                                System.out.println("!!!our code :" + code);
                                 if (code != 0){
                                     // 登录失败
                                     String msg = "error code:" + code + "\nerror_msg" + errorMsg;
                                     MyToast.show(getContext(),msg);
 
                                 } else {
-                                    // 登录成功
-                                    MyToast.show(getContext(), "登录成功");
+                                    // 发表成功
+                                    JSONObject data = jsonObject.getJSONObject("data");
+                                    MyToast.show(getContext(), "发表成功");
                                     // 提取data中的字段
+                                    String id = data.getString("id");
                                     String uid = data.getString("uid");
-                                    String email = data.getString("email");
-                                    String phonenum = data.getString("phonenum");
-                                    String username = data.getString("username");
-                                    String pictureUrl = data.getString("picture");  // 注意，这个是图片网络路径
-
-                                    // 登录成功才要保存用户信息
-                                    LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
-                                    localUserInfo.saveUserInfo(username,uid,email,phonenum,pictureUrl);
 
                                     localUserInfo.showUserInfo();
 
