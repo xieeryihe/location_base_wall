@@ -110,10 +110,6 @@ public class PublishFragment extends Fragment {
 
             Location location = new Location(getContext());
             location.getCurrentLocation();
-            double l = location.getLatitude();
-            System.out.println(l);
-
-
 
             // 发布帖子的数据
 //            String targetUrl = "http://121.43.110.176:8000/api/user/login";
