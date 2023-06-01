@@ -7,21 +7,19 @@ import android.graphics.Matrix;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.utils.Location;
@@ -32,7 +30,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 
 public class PublishFragment extends Fragment {
     private ImageView postMediaImageView;
@@ -89,8 +86,6 @@ public class PublishFragment extends Fragment {
             String text = postContentEditText.getText().toString();
             String data;
 
-            // TODO 还没写获取地理位置信息的内容
-
             // Check post mode based on media selection
             if (mediaUri != null) {
                 // Rich text mode
@@ -109,7 +104,19 @@ public class PublishFragment extends Fragment {
             }
 
             Location location = new Location(getContext());
-            location.getCurrentLocation();
+            location.getCurrentLocation(new Location.LocationCallback() {
+                @Override
+                public void onLocationReceived(double latitude, double longitude, String address) {
+                    System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
+                    System.out.println(address);
+                }
+
+                @Override
+                public void onLocationFailed(String errorMsg) {
+                    System.out.println("Failed to get location: " + errorMsg);
+
+                }
+            });
 
             // 发布帖子的数据
 //            String targetUrl = "http://121.43.110.176:8000/api/user/login";
