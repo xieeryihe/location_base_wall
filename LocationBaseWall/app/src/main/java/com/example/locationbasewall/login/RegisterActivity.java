@@ -11,7 +11,7 @@ import com.example.locationbasewall.R;
 public class RegisterActivity extends AppCompatActivity {
     private EditText registerUsernameEditText;
     private EditText registerEmailEditText;
-    private EditText editPhone;
+    private EditText registerPhonenumEditView;
     private Button registerButton;
 
     @Override
@@ -21,10 +21,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         registerUsernameEditText = findViewById(R.id.registerUsernameEditText);
         registerEmailEditText = findViewById(R.id.registerEmailEditText);
-        editPhone = findViewById(R.id.registerPhoneEditView);
+        registerPhonenumEditView = findViewById(R.id.registerPhonenumEditView);
         registerButton = findViewById(R.id.registerButton);
 
         // 在这里可以使用获取到的元素进行进一步的操作
         // 例如，添加点击事件监听器等等
+
+
+
     }
 }

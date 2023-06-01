@@ -45,7 +45,7 @@
 
         <!-- 手机号 -->
         <EditText
-            android:id="@+id/registerPhoneEditView"
+            android:id="@+id/registerPhonenumEditView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"

@@ -27,6 +27,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private TextView contentTextView;
     private EditText postDetailCommentEditText;
     private Button postDetailCommentButton;
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
