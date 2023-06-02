@@ -1,11 +1,15 @@
 package com.example.locationbasewall.home;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +26,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.locationbasewall.R;
+import com.example.locationbasewall.adapter.PostAdapter;
 import com.example.locationbasewall.login.LoginActivity;
+import com.example.locationbasewall.utils.DataGetter;
 import com.example.locationbasewall.utils.LocalUserInfo;
+import com.example.locationbasewall.utils.MyToast;
+import com.example.locationbasewall.utils.Post;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ProfileFragment extends Fragment {
     private ImageView profilePorTraitImageView;
@@ -38,6 +56,7 @@ public class ProfileFragment extends Fragment {
     private EditText editTextEmail;
     private EditText editTextPhone;
     private Button buttonEdit;
+
     private Button profileLogoutButton;
 
     private boolean isEditMode = false;
@@ -70,9 +89,50 @@ public class ProfileFragment extends Fragment {
         textViewEmail.setText("邮箱：" + localUserInfo.getEmail());
         textViewPhone.setText("手机号:" + localUserInfo.getPhonenum());
 
+
+        String user_picture = localUserInfo.getPicture();
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(user_picture) // 替换为您的图片链接
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                // 获取响应数据
+                if (response.isSuccessful()) {
+                    // 从响应中获取图片的字节数组
+                    byte[] imageData = Objects.requireNonNull(response.body()).bytes();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
+                    // 更新UI只能放在主线程中
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            profilePorTraitImageView.setImageBitmap(bitmap);
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 请求失败处理
+                e.printStackTrace();
+            }
+        });
+
         buttonEdit.setOnClickListener(v -> {
             if (isEditMode) {
-                // 当处于编辑模式时点击编辑按钮
+                // 编辑模式时按钮文字为“提交”，点击按钮，回到浏览模式
+
+                // 1. 发送数据
+                String username = editTextName.getText().toString();
+                String email = editTextEmail.getText().toString();
+                String phonenum = editTextPhone.getText().toString();
+
+
+
+                // 2. 修改UI
                 textViewUsername.setVisibility(View.VISIBLE);
                 textViewEmail.setVisibility(View.VISIBLE);
                 textViewPhone.setVisibility(View.VISIBLE);
@@ -134,7 +194,6 @@ public class ProfileFragment extends Fragment {
                 if (profileActivity != null) {
                     profileActivity.finish();
                 }
-
             }
         });
 
@@ -150,5 +209,9 @@ public class ProfileFragment extends Fragment {
         editor.clear();
         editor.apply();
     }
+
+    //---------------------
+
+
 
 }

@@ -1,15 +1,18 @@
 package com.example.locationbasewall.home;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -120,7 +124,6 @@ public class PostDetailActivity extends AppCompatActivity {
                         MyToast.show(context,msg);
                     } else {
                         JSONObject data = jsonObject.getJSONObject("data");
-                        MyToast.show(context, "获取数据成功");
                         processAndSetPost(data);
                     }
                 } catch (JSONException e) {
@@ -285,10 +288,8 @@ public class PostDetailActivity extends AppCompatActivity {
                     @Override
                     public void onLocationFailed(String errorMsg) {
                         System.out.println("Failed to get location: " + errorMsg);
-
                     }
                 });
-
 
                 //----------------------------------------------
 
@@ -311,8 +312,10 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 // TODO 换成删除逻辑的
-                String targetUrl = "http://121.43.110.176:8000/api/comment";
 
+                String targetUrl = String.format("" +
+                        "http://121.43.110.176:8000/api/post/delete?user_id=%s&post_id=%s",user_id,post_id);
+                System.out.println("delete url:" + targetUrl);
                 MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
                 Context context = getApplicationContext();
@@ -351,6 +354,15 @@ public class PostDetailActivity extends AppCompatActivity {
                         MyToast.show(context, "网络请求错误");
                     }
                 });
+
+            }
+        });
+
+        // 点击图像显示大图
+        postDetailMediaImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO 点击显示大图
 
             }
         });
@@ -414,7 +426,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
             // 2.1 获取头像图片
             Request user_request = new Request.Builder()
-                    .url(user_picture) // 替换为您的图片链接
+                    .url(user_picture)
                     .build();
             client.newCall(user_request).enqueue(new Callback() {
                 @Override
@@ -444,7 +456,7 @@ public class PostDetailActivity extends AppCompatActivity {
             // 2.2 获取媒体图像
             if (content_type.equals("1")){
                 Request media_request = new Request.Builder()
-                        .url(media_url) // 替换为您的图片链接
+                        .url(media_url)
                         .build();
                 client.newCall(media_request).enqueue(new Callback() {
                     @Override

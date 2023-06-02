@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.homeFragmentRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         Location location = new Location(getContext());
@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
                 System.out.println(address);
 
                 LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
-                String uid = localUserInfo.getId();
+                // String uid = localUserInfo.getId();
 
                 // 获取地理位置之后才能发送数据请求
                 int page_num = 1;
@@ -72,21 +72,18 @@ public class HomeFragment extends Fragment {
                         try {
                             int code = jsonObject.getInt("code");
                             String errorMsg = jsonObject.getString("error_msg");
-                            System.out.println("!!!our code :" + code);
+                            System.out.println("our code :" + code);
                             if (code != 0 && code != 1 && code != 2) {
                                 // 获取数据失败
                                 String msg = "error code:" + code + "\nerror_msg" + errorMsg;
                                 MyToast.show(getContext(),msg);
                             } else {
                                 JSONObject data = jsonObject.getJSONObject("data");
-                                MyToast.show(getContext(), "获取数据成功");
+                                // MyToast.show(getContext(), "获取数据成功");
 
                                 postList = new ArrayList<>(); // 初始化帖子数据列表
-
                                 processHomePost(data,postList);
 
-                                System.out.println("len-----------------------------------");
-                                System.out.println(postList.size());
                                 postAdapter = new PostAdapter(postList, new PostAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(Post post) {
@@ -99,6 +96,7 @@ public class HomeFragment extends Fragment {
                                     }
                                 });
                                 requireActivity().runOnUiThread(new Runnable() {
+                                    @SuppressLint("NotifyDataSetChanged")
                                     @Override
                                     public void run() {
                                         // 更新UI组件的代码
@@ -142,7 +140,7 @@ public class HomeFragment extends Fragment {
 
                 // 获取条目的各个字段值
                 String id = item.getString("id");
-                String uid = item.getString("user_id");
+                String user_id = item.getString("user_id");
                 String username = item.getString("username");
                 String user_picture = item.getString("user_picture");
                 String title = item.getString("title");
@@ -152,7 +150,7 @@ public class HomeFragment extends Fragment {
                 double location_y = item.getDouble("location_y");
                 String ip_address = item.getString("ip_address");
                 System.out.println(user_picture);
-                Post post = new Post(id, uid, username,user_picture, title, text, -1, "",date, location_x, location_y, ip_address);
+                Post post = new Post(id, user_id, username,user_picture, title, text, -1, "",date, location_x, location_y, ip_address);
                 postList.add(post);
 
             }

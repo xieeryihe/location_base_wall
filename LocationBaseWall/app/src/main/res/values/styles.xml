@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="AppTheme" parent="android:Theme.Light">
+        <!-- 添加其他属性 -->
+
+    </style>
+
     <style name="itemTextAppearanceActive">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/black</item>
