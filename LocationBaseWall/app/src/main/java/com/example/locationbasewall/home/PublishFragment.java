@@ -116,7 +116,7 @@ public class PublishFragment extends Fragment {
                     System.out.println(address);
 
                     LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
-                    String uid = localUserInfo.getId();
+                    String user_id = localUserInfo.getId();
 
 
                     // 获取地理位置之后才能发送完整数据
@@ -153,7 +153,7 @@ public class PublishFragment extends Fragment {
                     }
 
                     // 添加其他字段
-                    builder.addFormDataPart("user_id", uid);
+                    builder.addFormDataPart("user_id", user_id);
                     builder.addFormDataPart("title", title);
                     builder.addFormDataPart("text", text);
                     builder.addFormDataPart("content_type",String.valueOf(mContentType));
@@ -169,7 +169,7 @@ public class PublishFragment extends Fragment {
                             try {
                                 int code = jsonObject.getInt("code");
                                 String errorMsg = jsonObject.getString("error_msg");
-                                System.out.println("!!!our code :" + code);
+                                System.out.println("our code :" + code);
                                 if (code != 0){
                                     // 发表失败
                                     String msg = "error code:" + code + "\nerror_msg" + errorMsg;
@@ -181,7 +181,7 @@ public class PublishFragment extends Fragment {
                                     MyToast.show(getContext(), "发表成功");
                                     // 提取data中的字段
                                     String id = data.getString("id");
-                                    String uid = data.getString("uid");
+                                    String uid = data.getString("user_id");
                                     String media_url = data.getString("media_url");
                                     System.out.println(media_url);
                                     // localUserInfo.showUserInfo();

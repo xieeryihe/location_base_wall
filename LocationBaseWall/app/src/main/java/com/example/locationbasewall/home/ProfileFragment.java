@@ -65,10 +65,10 @@ public class ProfileFragment extends Fragment {
 
         LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
 
-        profileIdTextView.setText(localUserInfo.getId());
-        textViewUsername.setText(localUserInfo.getUsername());
-        textViewEmail.setText(localUserInfo.getEmail());
-        textViewPhone.setText(localUserInfo.getPhonenum());
+        profileIdTextView.setText("ID:" + localUserInfo.getId());
+        textViewUsername.setText("用户名:" + localUserInfo.getUsername());
+        textViewEmail.setText("邮箱：" + localUserInfo.getEmail());
+        textViewPhone.setText("手机号:" + localUserInfo.getPhonenum());
 
         buttonEdit.setOnClickListener(v -> {
             if (isEditMode) {

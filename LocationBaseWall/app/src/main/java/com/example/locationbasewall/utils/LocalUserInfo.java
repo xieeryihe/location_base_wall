@@ -14,6 +14,8 @@ public class LocalUserInfo {
     }
 
     public void saveUserInfo(String username, String id, String email, String phonenum, String pictureUrl) {
+        editor.putBoolean("isLogin",true);
+
         editor.putString("username", username);
         editor.putString("id", id);
         editor.putString("KEY_EMAIL", email);

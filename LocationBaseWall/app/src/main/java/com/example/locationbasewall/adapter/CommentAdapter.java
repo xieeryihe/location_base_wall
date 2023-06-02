@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.utils.Comment;
+import com.example.locationbasewall.utils.Post;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ import okhttp3.Response;
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private ArrayList<Comment> commentList;
     private CommentAdapter.OnItemClickListener onItemClickListener;
+    public interface OnItemClickListener {
+        void onItemClick(Comment comment);
+    }
 
     public CommentAdapter(ArrayList<Comment> commentList, OnItemClickListener onItemClickListener) {
         this.commentList = commentList;
@@ -40,7 +44,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
-        return new CommentViewHolder(view);
+        return new CommentViewHolder(view, this.onItemClickListener);
     }
 
     @Override
@@ -54,23 +58,23 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         return commentList.size();
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(Comment comment);
-    }
-
-    public class CommentViewHolder extends RecyclerView.ViewHolder {
+    public class CommentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView commentImageView;
         private TextView commentUsernameTextView;
         private TextView commentIPTextView;
         private TextView commentContentTextView;
 
+        private CommentAdapter.OnItemClickListener onItemClickListener;
 
-        public CommentViewHolder(@NonNull View itemView) {
+        public CommentViewHolder(@NonNull View itemView, CommentAdapter.OnItemClickListener onItemClickListener) {
             super(itemView);
             commentImageView = itemView.findViewById(R.id.commentImageView);
             commentUsernameTextView = itemView.findViewById(R.id.commentUsernameTextView);
             commentIPTextView = itemView.findViewById(R.id.commentIPTextView);
             commentContentTextView = itemView.findViewById(R.id.commentContentTextView);
+            this.onItemClickListener = onItemClickListener;
+            itemView.setOnClickListener(this);
+
         }
 
         public void bind(Comment comment) {
@@ -95,6 +99,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
+
                                 commentImageView.setImageBitmap(bitmap);
                                 commentUsernameTextView.setText(comment.getUsername());
                                 commentIPTextView.setText(comment.getIp_address());
@@ -109,6 +114,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     e.printStackTrace();
                 }
             });
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                Comment comment = commentList.get(position);
+                onItemClickListener.onItemClick(comment);
+            }
         }
     }
 }

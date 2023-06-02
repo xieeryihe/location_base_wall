@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
         if (EasyPermissions.hasPermissions(this, permissions)) {
             //true 有权限 开始定位
-            MyToast.show(this,"已获得权限，可以定位了");
+            // MyToast.show(this,"已获得权限，可以定位了");
             mLocationClient.startLocation();
         } else {
             //false 无权限

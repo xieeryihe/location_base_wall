@@ -3,7 +3,6 @@ package com.example.locationbasewall.home;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,18 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class HomeFragment extends Fragment {
 
@@ -104,9 +92,9 @@ public class HomeFragment extends Fragment {
                                     public void onItemClick(Post post) {
                                         // 处理点击事件，跳转到详情页或执行其他操作
                                         // 在此处启动 PostDetailActivity，并传递帖子数据
-                                        String post_id = post.getId();
                                         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-                                        intent.putExtra("post_id", post_id);
+                                        intent.putExtra("post_id", post.getId());
+                                        intent.putExtra("publisher_id",post.getUid());
                                         startActivity(intent);
                                     }
                                 });

@@ -29,11 +29,11 @@
                 >
 
                 <ImageView
-                    android:id="@+id/postDetailImageView"
+                    android:id="@+id/postDetailUserImageView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.12"
+                    android:layout_weight="0.2"
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
                     android:src="@drawable/ding_zhen" />
@@ -42,7 +42,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="0.88"
+                    android:layout_weight="0.8"
                     android:weightSum="1">
 
                     <TextView
@@ -53,7 +53,7 @@
                         android:gravity="center_vertical"
                         android:paddingStart="@dimen/common_margin"
                         android:text="丁真"
-                        android:textSize="@dimen/font_size_middle_big" />
+                        android:textSize="@dimen/font_size_middle_small" />
 
                     <TextView
                         android:id="@+id/postDetailIPTextView"
@@ -62,18 +62,31 @@
                         android:paddingStart="@dimen/common_margin"
                         android:layout_weight="0.5"
                         android:text="IP属地：妈妈"
-                        android:textSize="@dimen/font_size_middle_big"
+                        android:textSize="@dimen/font_size_middle_small"
                         android:gravity="center_vertical"/>
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/postDetailDeletePostButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="删除帖子"/>
 
 
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@color/gray"
+                android:layout_marginTop="@dimen/small_margin"
+
+                />
             <TextView
                 android:id="@+id/postDetailTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/common_margin"
+                android:layout_marginTop="@dimen/small_margin"
                 android:textSize="@dimen/font_size_middle_big"
                 android:text="title"
                 android:textStyle="bold"/>
