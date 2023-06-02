@@ -30,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.homeContentFragment, new HomeFragment());
         fragmentTransaction.commit();
 
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;

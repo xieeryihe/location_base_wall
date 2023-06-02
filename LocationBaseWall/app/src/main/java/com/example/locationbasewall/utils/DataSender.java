@@ -44,8 +44,6 @@ public class DataSender {
                 .post(requestBody)
                 .build();
 
-        System.out.println("-----------------------------request");
-
         // 执行异步请求
         client.newCall(request).enqueue(new Callback() {
             @Override

@@ -48,20 +48,6 @@ public class LoginActivity extends AppCompatActivity {
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
 
-            // 创建一个 JSON 对象并添加所需的属性
-            JSONObject json = new JSONObject();
-
-            try {
-                json.put("username", username);
-                json.put("password", password);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            String jsonString = json.toString();
-//            System.out.println("------------------------------");
-//            System.out.println(jsonString);
-
             String targetUrl = "http://121.43.110.176:8000/api/user/login";
             RequestBody requestBody = new FormBody.Builder()
                     .add("userName",username)
@@ -85,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                             // 登录成功
                             MyToast.show(LoginActivity.this, "登录成功");
                             // 提取data中的字段
-                            String uid = data.getString("uid");
+                            String uid = data.getString("user_id");
                             String email = data.getString("email");
                             String phonenum = data.getString("phonenum");
                             String username = data.getString("username");
@@ -107,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
                         MyToast.show(LoginActivity.this, "JSON错误");
                         e.printStackTrace();
                     }
-
                 }
 
                 @Override

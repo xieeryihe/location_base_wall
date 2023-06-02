@@ -23,12 +23,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.login.LoginActivity;
+import com.example.locationbasewall.utils.LocalUserInfo;
 
 import java.io.IOException;
 import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     private ImageView profilePorTraitImageView;
+    private TextView profileIdTextView;
     private TextView textViewUsername;
     private TextView textViewEmail;
     private TextView textViewPhone;
@@ -50,6 +52,8 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         profilePorTraitImageView = view.findViewById(R.id.profilePortraitImageView);
+        profileIdTextView = view.findViewById(R.id.profileIdTextView);
+
         textViewUsername = view.findViewById(R.id.textViewUsername);
         textViewEmail = view.findViewById(R.id.textViewEmail);
         textViewPhone = view.findViewById(R.id.textViewPhone);
@@ -59,6 +63,12 @@ public class ProfileFragment extends Fragment {
         buttonEdit = view.findViewById(R.id.buttonEditProfile);
         profileLogoutButton = view.findViewById(R.id.profileLogoutButton);
 
+        LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
+
+        profileIdTextView.setText(localUserInfo.getId());
+        textViewUsername.setText(localUserInfo.getUsername());
+        textViewEmail.setText(localUserInfo.getEmail());
+        textViewPhone.setText(localUserInfo.getPhonenum());
 
         buttonEdit.setOnClickListener(v -> {
             if (isEditMode) {

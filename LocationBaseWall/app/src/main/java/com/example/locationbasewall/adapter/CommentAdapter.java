@@ -1,27 +1,39 @@
 package com.example.locationbasewall.adapter;
 
-import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.locationbasewall.R;
-
 import com.example.locationbasewall.utils.Comment;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
-    private List<Comment> commentList;
-    private Context context;
+    private ArrayList<Comment> commentList;
+    private CommentAdapter.OnItemClickListener onItemClickListener;
 
-    public CommentAdapter(List<Comment> commentList, Context context) {
+    public CommentAdapter(ArrayList<Comment> commentList, OnItemClickListener onItemClickListener) {
         this.commentList = commentList;
-        this.context = context;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
@@ -42,19 +54,61 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         return commentList.size();
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(Comment comment);
+    }
+
     public class CommentViewHolder extends RecyclerView.ViewHolder {
-        private TextView nameTextView;
-        private TextView contentTextView;
+        private ImageView commentImageView;
+        private TextView commentUsernameTextView;
+        private TextView commentIPTextView;
+        private TextView commentContentTextView;
+
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(R.id.commentUsernameTextView);
-            contentTextView = itemView.findViewById(R.id.commentContentTextView);
+            commentImageView = itemView.findViewById(R.id.commentImageView);
+            commentUsernameTextView = itemView.findViewById(R.id.commentUsernameTextView);
+            commentIPTextView = itemView.findViewById(R.id.commentIPTextView);
+            commentContentTextView = itemView.findViewById(R.id.commentContentTextView);
         }
 
         public void bind(Comment comment) {
-            nameTextView.setText(comment.getUsername());
-            contentTextView.setText(comment.getContent());
+
+            String user_picture = comment.getUser_picture();
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(user_picture) // 替换为您的图片链接
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    // 获取响应数据
+                    if (response.isSuccessful()) {
+                        // 从响应中获取图片的字节数组
+                        byte[] imageData = Objects.requireNonNull(response.body()).bytes();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
+                        // 更新UI只能放在主线程中
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                commentImageView.setImageBitmap(bitmap);
+                                commentUsernameTextView.setText(comment.getUsername());
+                                commentIPTextView.setText(comment.getIp_address());
+                                commentContentTextView.setText(comment.getText());
+                            }
+                        });
+                    }
+                }
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    // 请求失败处理
+                    e.printStackTrace();
+                }
+            });
         }
     }
 }

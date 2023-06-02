@@ -28,6 +28,7 @@
                 >
 
                 <ImageView
+                    android:id="@+id/postOverviewImageView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -43,21 +44,23 @@
                     android:layout_weight="0.88"
                     android:weightSum="1">
                     <TextView
+                        android:id="@+id/postOverviewUsernameTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/common_margin"
                         android:layout_weight="0.5"
                         android:text="username"
-                        android:textSize="@dimen/font_size_middle"
+                        android:textSize="@dimen/font_size_small"
                         android:textStyle="bold"
                         android:gravity="center_vertical"/>
                     <TextView
+                        android:id="@+id/postOverviewIPTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/common_margin"
                         android:layout_weight="0.5"
                         android:text="IP属地"
-                        android:textSize="@dimen/font_size_middle"
+                        android:textSize="@dimen/font_size_small"
                         android:gravity="center_vertical"/>
                 </LinearLayout>
 
@@ -65,7 +68,7 @@
 
             </LinearLayout>
             <TextView
-                android:id="@+id/post_title"
+                android:id="@+id/postOverviewTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/common_margin"
@@ -73,7 +76,7 @@
                 android:text="title"
                 android:textStyle="bold"/>
             <TextView
-                android:id="@+id/postContentText"
+                android:id="@+id/postOverviewContentTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/common_margin"

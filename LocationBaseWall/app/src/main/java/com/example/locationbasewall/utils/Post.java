@@ -4,24 +4,33 @@ package com.example.locationbasewall.utils;
 public class Post {
     private String id;
     private String uid;
+    private String username;
+    private String imageUrl; // 头像链接
     private String title;
     private String text;
     private int content_type;
+    private String mediaUrl;
+    private String date;
     private double location_x;
     private double location_y;
-    private byte[] mediaData;
     private String address;
 
-    public Post(String id, String uid, String title, String text, int content_type, double location_x, double location_y, byte[] mediaData, String address) {
+    private byte[] imageData;
+
+    public Post(String id, String uid, String username, String imageUrl, String title, String text, int content_type, String mediaUrl,String date, double location_x, double location_y, String address) {
         this.id = id;
         this.uid = uid;
+        this.username = username;
+        this.imageUrl = imageUrl;
         this.title = title;
         this.text = text;
         this.content_type = content_type;
+        this.mediaUrl = mediaUrl;
+        this.date = date;
         this.location_x = location_x;
         this.location_y = location_y;
-        this.mediaData = mediaData;
         this.address = address;
+
     }
 
     public String getId() {
@@ -32,32 +41,58 @@ public class Post {
         return uid;
     }
 
+    public String getUsername() {
+        return username;
+    }
 
-    public String getTitle(){
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getTitle() {
         return title;
     }
+
     public String getText() {
         return text;
     }
 
-    public int getContent_type() {
+    public int getContentType() {
         return content_type;
     }
 
-    public double getLocation_x() {
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public double getLocationX() {
         return location_x;
     }
 
-    public double getLocation_y() {
+    public double getLocationY() {
         return location_y;
-    }
-
-    public byte[] getMediaData() {
-        return mediaData;
     }
 
     public String getAddress() {
         return address;
     }
-}
 
+    public void setImageData(byte[] imageData){
+        this.imageData = imageData;
+    }
+    public byte[] getImageData(){
+        return this.imageData;
+    }
+}

@@ -25,9 +25,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.locationbasewall.R;
-import com.example.locationbasewall.login.LoginActivity;
 import com.example.locationbasewall.utils.DataSender;
 import com.example.locationbasewall.utils.LocalUserInfo;
 import com.example.locationbasewall.utils.Location;
@@ -40,10 +40,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Objects;
 
-import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -68,7 +65,6 @@ public class PublishFragment extends Fragment {
         postContentEditText = view.findViewById(R.id.postContentEditText);
         postButton = view.findViewById(R.id.postButton);
 
-
         // Initialize the ActivityResultLauncher
         galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -91,6 +87,7 @@ public class PublishFragment extends Fragment {
                                         postMediaImageView.setImageBitmap(thumbnail);
                                     }
                                 }
+
                             }
                         }
                     }
@@ -98,34 +95,23 @@ public class PublishFragment extends Fragment {
 
         postMediaImageView.setOnClickListener(v -> openGallery());
 
-
         postButton.setOnClickListener(v -> {
             String title = postTitleEditText.getText().toString();
             String text = postContentEditText.getText().toString();
 
-
-
-            byte[] mediaData;
-            // Check post mode based on media selection
             if (mediaUri != null) {
                 // Rich text mode
                 mContentType = 1;
-                // 获取媒体数据
-                mediaData = isVideoFile(mediaUri) ? getVideoData(mediaUri) : getImageData(mediaUri);
-                // 整理成需要的数据格式
 
             } else {
                 // Plain text mode
                 mContentType = 0;
-                mediaData = null;
             }
 
             Location location = new Location(getContext());
             location.getCurrentLocation(new Location.LocationCallback() {
                 @Override
                 public void onLocationReceived(double latitude, double longitude, String province, String city, String address) {
-                    System.out.println("Latitude: " + latitude + ", Longitude: " + longitude);
-                    System.out.println(province);
                     System.out.println(city);
                     System.out.println(address);
 
@@ -137,38 +123,43 @@ public class PublishFragment extends Fragment {
                     String targetUrl = "http://121.43.110.176:8000/api/post";
 
                     MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                    String mediaUriStorage = getImagePathFromUri(getContext(), mediaUri);
 
-                    System.out.println("------------------media");
-                    System.out.println(mediaUri);
-                    System.out.println(mediaUriStorage);
-                    File file = new File(mediaUriStorage);
-                    // 添加图片部分
-                    String fieldName = "media";  // 字段名
-                    String fileName = file.getName();  // 文件名
+                    if(mContentType == 1){
+                        // 富文本
+                        String mediaUriStorage = getImagePathFromUri(getContext(), mediaUri);
+                        System.out.println("------------------media");
+                        System.out.println(mediaUri);
+                        System.out.println(mediaUriStorage);
+                        File file = new File(mediaUriStorage);
+                        // 添加图片部分
+                        String fieldName = "media";  // 字段名
+                        String fileName = file.getName();  // 文件名
 
-                    MultipartBody.Part multipartBodyPart = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                        try {
-                            multipartBodyPart = buildMultipartBodyPart(getContext(), mediaUri, fieldName, fileName);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                        MultipartBody.Part multipartBodyPart = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                            try {
+                                multipartBodyPart = buildMultipartBodyPart(getContext(), mediaUri, fieldName, fileName);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    }
 
-                    // 将 multipartBodyPart 添加到 MultipartBody.Builder 中
-                    if (multipartBodyPart != null) {
-                        builder.addPart(multipartBodyPart);
+                        // 将 multipartBodyPart 添加到 MultipartBody.Builder 中
+                        if (multipartBodyPart != null) {
+                            builder.addPart(multipartBodyPart);
+                        }
+                    }else {
+                        System.out.println("纯文本------------");
                     }
 
                     // 添加其他字段
-                    builder.addFormDataPart("uid", uid);
+                    builder.addFormDataPart("user_id", uid);
                     builder.addFormDataPart("title", title);
                     builder.addFormDataPart("text", text);
                     builder.addFormDataPart("content_type",String.valueOf(mContentType));
                     builder.addFormDataPart("location_x", String.valueOf(longitude));
                     builder.addFormDataPart("location_y", String.valueOf(latitude));
-                    builder.addFormDataPart("ip_address",address);
+                    builder.addFormDataPart("ip_address",province);  // 这里给省就行了
                     RequestBody requestBody = builder.build();
 
                     DataSender.sendDataToServer(requestBody, targetUrl, new DataSender.DataSenderCallback() {
@@ -180,7 +171,7 @@ public class PublishFragment extends Fragment {
                                 String errorMsg = jsonObject.getString("error_msg");
                                 System.out.println("!!!our code :" + code);
                                 if (code != 0){
-                                    // 登录失败
+                                    // 发表失败
                                     String msg = "error code:" + code + "\nerror_msg" + errorMsg;
                                     MyToast.show(getContext(),msg);
 
@@ -191,14 +182,11 @@ public class PublishFragment extends Fragment {
                                     // 提取data中的字段
                                     String id = data.getString("id");
                                     String uid = data.getString("uid");
+                                    String media_url = data.getString("media_url");
+                                    System.out.println(media_url);
+                                    // localUserInfo.showUserInfo();
 
-                                    localUserInfo.showUserInfo();
 
-//                            finish(); // 销毁当前活动（登录活动）
-
-                                    // 启动新活动
-                                    Intent intent = new Intent(getContext(), HomeActivity.class);
-                                    startActivity(intent);
                                 }
                             } catch (JSONException e) {
                                 MyToast.show(getContext(), "JSON错误");
@@ -220,72 +208,9 @@ public class PublishFragment extends Fragment {
 
                 }
             });
-
-            // 发布帖子的数据
-//            String targetUrl = "http://121.43.110.176:8000/api/user/login";
-//            DataSender.sendDataToServer(data, targetUrl);
         });
 
         return view;
-    }
-
-    // 获取图像数据
-    private byte[] getImageData(Uri imageUri) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    // 获取视频数据
-    private byte[] getVideoData(Uri videoUri) {
-        try {
-            InputStream inputStream = requireActivity().getContentResolver().openInputStream(videoUri);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-
-
-    // 生成所需的目标数据
-    // TODO 具体需要的数据有哪些还没确定
-    public static String formatPostData(int contentType, String title, String text, double locationX, double locationY, byte[] mediaData) {
-        try {
-            // Create the JSON object for the request body
-            JSONObject bodyJson = new JSONObject();
-            bodyJson.put("content_type", contentType);
-            bodyJson.put("title", title);
-            bodyJson.put("text", text);
-            bodyJson.put("location_x", locationX);
-            bodyJson.put("location_y", locationY);
-            bodyJson.put("mediaData", mediaData);
-
-            JSONObject postJson = new JSONObject();
-            postJson.put("post", bodyJson);
-
-            return postJson.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private void openGallery() {

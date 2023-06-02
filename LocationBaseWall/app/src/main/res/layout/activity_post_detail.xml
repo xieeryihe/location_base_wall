@@ -46,7 +46,7 @@
                     android:weightSum="1">
 
                     <TextView
-                        android:id="@+id/postDetailUsername"
+                        android:id="@+id/postDetailUsernameTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
@@ -56,7 +56,7 @@
                         android:textSize="@dimen/font_size_middle_big" />
 
                     <TextView
-                        android:id="@+id/postDetailIP"
+                        android:id="@+id/postDetailIPTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/common_margin"
@@ -88,6 +88,31 @@
                 android:text="content"/>
 
 
+
+            <ImageView
+                android:id="@+id/postDetailMediaImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:src="@drawable/img2"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                />
+
+
+
+            <VideoView
+                android:id="@+id/postDetailMediaVideoView"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                />
+
+
+
+
+
+
         </LinearLayout>
 
         <View
@@ -101,7 +126,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/commentsRecycleView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            />
     </LinearLayout>
 
 
@@ -117,13 +143,13 @@
             android:id="@+id/postDetailCommentEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:maxLines="3"
-            android:inputType="textMultiLine"
-            android:imeOptions="actionDone"
             android:layout_weight="0.8"
-            android:visibility="visible"
             android:hint="评论一下..."
-            />
+            android:imeOptions="actionDone"
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:minHeight="48dp"
+            android:visibility="visible" />
         <Button
             android:id="@+id/postDetailCommentButton"
             android:layout_width="0dp"
