@@ -164,12 +164,10 @@ public class PostDetailActivity extends AppCompatActivity {
                         MyToast.show(context,msg);
                     } else {
                         JSONObject data = jsonObject.getJSONObject("data");
-                        MyToast.show(context, errorMsg);
+                        // MyToast.show(context, errorMsg);
                         commentList = new ArrayList<>(); // 初始化帖子数据列表
 
                         processComments(data,commentList);
-                        System.out.println("评论数量为：");
-                        System.out.println(commentList.size());
                         commentAdapter = new CommentAdapter(commentList, new CommentAdapter.OnItemClickListener() {
                             @Override
                             public void onItemClick(Comment comment) {
@@ -183,7 +181,6 @@ public class PostDetailActivity extends AppCompatActivity {
                                 // 更新UI组件的代码
                                 commentsRecycleView.setAdapter(commentAdapter);
                                 commentAdapter.notifyDataSetChanged();
-
                             }
                         });
 

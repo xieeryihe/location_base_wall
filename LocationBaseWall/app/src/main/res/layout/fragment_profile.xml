@@ -24,7 +24,7 @@
                 android:weightSum="1">
 <!--                TODO 这里加个头像，回头选图像的时候就裁剪，这样显示的图像就是目标大小（长宽一样）-->
                 <ImageView
-                    android:id="@+id/profilePortraitImageView"
+                    android:id="@+id/profileShowImageView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -32,6 +32,17 @@
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
                     android:src="@drawable/img2"
+                    />
+                <ImageView
+                    android:id="@+id/profileEditImageView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.2"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/img2"
+                    android:visibility="gone"
                     />
                 <View
                     android:layout_width="0dp"
@@ -41,14 +52,36 @@
 
                 </View>
                 <Button
-                    android:id="@+id/buttonEditProfile"
+                    android:id="@+id/profileEditButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="编辑"
                     android:textSize="@dimen/font_size_middle_big"
                     android:gravity="center"
-
                     />
+
+                <Button
+                    android:id="@+id/profileSaveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:gravity="center"
+                    android:text="保存"
+                    android:textSize="@dimen/font_size_middle_big"
+                    android:visibility="gone"
+                    />
+
+                <Button
+                    android:id="@+id/profileCancelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:text="取消"
+                    android:textSize="@dimen/font_size_middle_big"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    />
+
 
             </LinearLayout>
 

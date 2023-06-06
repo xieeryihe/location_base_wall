@@ -2,6 +2,7 @@ package com.example.locationbasewall.home;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.locationbasewall.R;
+import com.example.locationbasewall.utils.LocalUserInfo;
+import com.example.locationbasewall.utils.MyToast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -22,6 +25,9 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+//        LocalUserInfo localUserInfo = new LocalUserInfo(getApplicationContext());
+//        localUserInfo.clearUserInfo();
 
         fragmentManager = getSupportFragmentManager();
 

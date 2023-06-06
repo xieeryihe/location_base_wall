@@ -115,11 +115,12 @@ public class PublishFragment extends Fragment {
                     System.out.println(city);
                     System.out.println(address);
 
+                    // 获取地理位置之后才能发送完整数据
+
+
                     LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
                     String user_id = localUserInfo.getId();
 
-
-                    // 获取地理位置之后才能发送完整数据
                     String targetUrl = "http://121.43.110.176:8000/api/post";
 
                     MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -127,9 +128,6 @@ public class PublishFragment extends Fragment {
                     if(mContentType == 1){
                         // 富文本
                         String mediaUriStorage = getImagePathFromUri(getContext(), mediaUri);
-                        System.out.println("------------------media");
-                        System.out.println(mediaUri);
-                        System.out.println(mediaUriStorage);
                         File file = new File(mediaUriStorage);
                         // 添加图片部分
                         String fieldName = "media";  // 字段名
