@@ -1,5 +1,10 @@
 package com.example.locationbasewall.adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -14,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.locationbasewall.R;
+import com.example.locationbasewall.home.PostDetailActivity;
 import com.example.locationbasewall.utils.Post;
 
 import java.io.IOException;
@@ -30,14 +36,38 @@ import okhttp3.Response;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
     private ArrayList<Post> postList;
     private OnItemClickListener onItemClickListener;
+    private Activity activity;
+    private Context context;
+
 
     public interface OnItemClickListener {
         void onItemClick(Post post);
     }
-
+    public PostAdapter(Activity activity, Context context) {
+        this.postList = new ArrayList<>();
+        this.activity = activity;
+        this.context = context;
+        this.onItemClickListener = new OnItemClickListener() {
+            @Override
+            public void onItemClick(Post post) {
+                Intent intent = new Intent(activity, PostDetailActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  // 用一个新的任务栈存储新的activity
+                intent.putExtra("post_id", post.getId());
+                intent.putExtra("publisher_id",post.getUid());
+                startActivity(context, intent,null);
+            }
+        };
+    }
     public PostAdapter(ArrayList<Post> postList, OnItemClickListener onItemClickListener) {
         this.postList = postList;
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setPostList(ArrayList<Post> postList) {
+        this.postList = postList;
+    }
+    public ArrayList<Post> getPostList(){
+        return this.postList;
     }
 
     @NonNull

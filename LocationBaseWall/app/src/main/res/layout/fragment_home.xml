@@ -4,11 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".home.HomeFragment">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,13 +18,23 @@
             android:textColor="@color/black"
             android:padding="16dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/homeFragmentRecyclerView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/homeFragmentSwipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/homeFragmentRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
+
+
+
 
 
 </FrameLayout>

@@ -1,17 +1,12 @@
 package com.example.locationbasewall.utils;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.locationbasewall.adapter.PostAdapter;
-import com.example.locationbasewall.home.PostDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,11 +16,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import okhttp3.*;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class DataGetter {
     private final OkHttpClient client;
+    static int ret;
 
     public DataGetter() {
         client = new OkHttpClient();
@@ -74,8 +74,10 @@ public class DataGetter {
         });
     }
 
-    public static void getLocationAndPostOverviewData
-            (Activity activity, RecyclerView recyclerView, int page_num, int page_size, int distance){
+    // 返回获取的帖子数量
+    public static int getLocationAndPostOverviewData
+            (Activity activity,PostAdapter postAdapter,
+             int page_num, int page_size, int distance){
 
         Context context = activity.getApplicationContext();
         Location location = new Location(context);
@@ -98,38 +100,27 @@ public class DataGetter {
                             int code = jsonObject.getInt("code");
                             String errorMsg = jsonObject.getString("error_msg");
                             System.out.println("our code :" + code);
-                            if (code != 0 && code != 1 && code != 2) {
+                            if (code != 0 && code != 1 && code != 2 && code != 4) {
                                 // 获取数据失败
                                 String msg = "error code:" + code + "\nerror_msg" + errorMsg;
                                 MyToast.show(context,msg);
                             } else {
                                 JSONObject data = jsonObject.getJSONObject("data");
 
-                                ArrayList<Post>postList = new ArrayList<>(); // 初始化帖子数据列表
-                                processPostOverviewData(data,postList);
+                                ret = processPostOverviewData(data,postAdapter.getPostList());
+                                System.out.println("获取的post列表长度为：");
+                                System.out.println(ret);
 
-                                PostAdapter postAdapter = new PostAdapter(postList, new PostAdapter.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(Post post) {
-                                        // 处理点击事件，跳转到详情页或执行其他操作
-                                        // 在此处启动 PostDetailActivity，并传递帖子数据
-
-                                        Intent intent = new Intent(activity, PostDetailActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  // 用一个新的任务栈存储新的activity
-                                        intent.putExtra("post_id", post.getId());
-                                        intent.putExtra("publisher_id",post.getUid());
-                                        startActivity(context, intent,null);
-                                    }
-                                });
                                 activity.runOnUiThread(new Runnable() {
                                     @SuppressLint("NotifyDataSetChanged")
                                     @Override
                                     public void run() {
                                         // 更新UI组件的代码
                                         postAdapter.notifyDataSetChanged();
-                                        recyclerView.setAdapter(postAdapter);
+
                                     }
                                 });
+
                             }
                         } catch (JSONException e) {
                             MyToast.show(context, "JSON错误");
@@ -151,10 +142,10 @@ public class DataGetter {
 
             }
         });
-
+        return ret;
     }
 
-    public static void processPostOverviewData(JSONObject data, ArrayList<Post> postList) {
+    public static int processPostOverviewData(JSONObject data, ArrayList<Post> postList) {
 
         try {
 
@@ -177,13 +168,12 @@ public class DataGetter {
                 System.out.println(user_picture);
                 Post post = new Post(id, user_id, username,user_picture, title, text, -1, "",date, location_x, location_y, ip_address);
                 postList.add(post);
-
             }
-
+            return jsonArray.length();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        return 0;
     }
 
 }
