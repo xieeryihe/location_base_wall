@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/common_padding"
         android:hint="手机号"
-        android:text="111"
         android:inputType="phone"/>
 
     <EditText
@@ -26,7 +25,6 @@
         android:layout_height="wrap_content"
         android:hint="密码"
         android:paddingBottom="@dimen/common_padding"
-        android:text="111"
         android:inputType="textPassword" />
 
     <Button

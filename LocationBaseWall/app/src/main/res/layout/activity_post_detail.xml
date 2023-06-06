@@ -8,122 +8,65 @@
     android:background="@color/slight_gray">
 
     <LinearLayout
+        android:id="@+id/item_post"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_marginBottom="@dimen/small_margin"
         android:layout_weight="1">
 
+
         <LinearLayout
-            android:id="@+id/item_post"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
+            android:weightSum="1"
             >
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/postDetailUserImageView"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1"
-                >
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.2"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/ding_zhen" />
 
-                <ImageView
-                    android:id="@+id/postDetailUserImageView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0.2"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ding_zhen" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="0.8"
+                android:weightSum="1">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_weight="0.8"
-                    android:weightSum="1">
-
-                    <TextView
-                        android:id="@+id/postDetailUsernameTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:gravity="center_vertical"
-                        android:paddingStart="@dimen/common_margin"
-                        android:text="丁真"
-                        android:textSize="@dimen/font_size_middle_small" />
-
-                    <TextView
-                        android:id="@+id/postDetailIPTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/common_margin"
-                        android:layout_weight="0.5"
-                        android:text="IP属地：妈妈"
-                        android:textSize="@dimen/font_size_middle_small"
-                        android:gravity="center_vertical"/>
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/postDetailDeletePostButton"
+                <TextView
+                    android:id="@+id/postDetailUsernameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="删除帖子"/>
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/common_margin"
+                    android:text="丁真"
+                    android:textSize="@dimen/font_size_middle_small" />
 
-
+                <TextView
+                    android:id="@+id/postDetailIPTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/common_margin"
+                    android:layout_weight="0.5"
+                    android:text="IP属地：妈妈"
+                    android:textSize="@dimen/font_size_middle_small"
+                    android:gravity="center_vertical"/>
             </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="@color/gray"
-                android:layout_marginTop="@dimen/small_margin"
 
-                />
-            <TextView
-                android:id="@+id/postDetailTitleTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/small_margin"
-                android:textSize="@dimen/font_size_middle_big"
-                android:text="title"
-                android:textStyle="bold"/>
-            <TextView
-                android:id="@+id/postDetailContentTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/common_margin"
-                android:textSize="@dimen/font_size_middle"
-                android:maxLines="3"
-                android:ellipsize="end"
-                android:text="content"/>
-
-
-
-            <ImageView
-                android:id="@+id/postDetailMediaImageView"
+            <Button
+                android:id="@+id/postDetailDeletePostButton"
                 android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:src="@drawable/img2"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                />
-
-
-
-            <VideoView
-                android:id="@+id/postDetailMediaVideoView"
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                />
-
-
-
-
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="删除帖子"/>
 
 
         </LinearLayout>
@@ -133,14 +76,69 @@
             android:layout_height="3dp"
             android:background="@color/gray"
             android:layout_marginTop="@dimen/small_margin"
-            android:layout_marginBottom="@dimen/small_margin"
-            />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/commentsRecycleView"
+            />
+        <TextView
+            android:id="@+id/postDetailTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:layout_marginTop="@dimen/small_margin"
+            android:textSize="@dimen/font_size_middle_big"
+            android:text="title"
+            android:textStyle="bold"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/postDetailContentTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/common_margin"
+                    android:textSize="@dimen/font_size_middle"
+                    android:minLines="3"
+                    android:text="content"/>
+
+                <ImageView
+                    android:id="@+id/postDetailMediaImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:src="@drawable/img2"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    />
+
+                <VideoView
+                    android:id="@+id/postDetailMediaVideoView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@color/gray"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/commentsRecycleView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
     </LinearLayout>
 
 

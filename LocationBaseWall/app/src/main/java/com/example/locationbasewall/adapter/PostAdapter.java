@@ -17,6 +17,7 @@ import com.example.locationbasewall.R;
 import com.example.locationbasewall.utils.Post;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,14 +28,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-    private List<Post> postList;
+    private ArrayList<Post> postList;
     private OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(Post post);
     }
 
-    public PostAdapter(List<Post> postList, OnItemClickListener onItemClickListener) {
+    public PostAdapter(ArrayList<Post> postList, OnItemClickListener onItemClickListener) {
         this.postList = postList;
         this.onItemClickListener = onItemClickListener;
     }
@@ -102,7 +103,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             public void run() {
                                 postOverviewImageView.setImageBitmap(bitmap);
                                 postOverviewUsernameTextView.setText(post.getUsername());
-                                postOverviewIPTextView.setText(post.getAddress());
+                                postOverviewIPTextView.setText(String.format("%s %s", post.getAddress(), post.getDate()));
                                 titleTextView.setText(post.getTitle());
                                 contentTextView.setText(post.getText());
                             }

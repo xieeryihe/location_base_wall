@@ -80,7 +80,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         public void bind(Comment comment) {
 
             String user_picture = comment.getUser_picture();
-
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(user_picture) // 替换为您的图片链接
@@ -99,7 +98,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-
                                 commentImageView.setImageBitmap(bitmap);
                                 commentUsernameTextView.setText(comment.getUsername());
                                 commentIPTextView.setText(comment.getIp_address());

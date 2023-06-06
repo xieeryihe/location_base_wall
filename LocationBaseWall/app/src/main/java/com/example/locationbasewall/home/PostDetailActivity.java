@@ -168,18 +168,22 @@ public class PostDetailActivity extends AppCompatActivity {
                         commentList = new ArrayList<>(); // 初始化帖子数据列表
 
                         processComments(data,commentList);
+                        System.out.println("评论数量为：");
+                        System.out.println(commentList.size());
                         commentAdapter = new CommentAdapter(commentList, new CommentAdapter.OnItemClickListener() {
                             @Override
                             public void onItemClick(Comment comment) {
                                 // 评论的点击事件，同样是唤起评论键盘那些
                             }
                         });
+
                         PostDetailActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 // 更新UI组件的代码
-                                commentAdapter.notifyDataSetChanged();
                                 commentsRecycleView.setAdapter(commentAdapter);
+                                commentAdapter.notifyDataSetChanged();
+
                             }
                         });
 

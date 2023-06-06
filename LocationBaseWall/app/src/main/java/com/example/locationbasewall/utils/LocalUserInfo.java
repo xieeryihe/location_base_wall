@@ -18,7 +18,7 @@ public class LocalUserInfo {
 
         editor.putString("username", username);
         editor.putString("id", id);
-        editor.putString("KEY_EMAIL", email);
+        editor.putString("email", email);
         editor.putString("phonenum", phonenum);
         editor.putString("pictureUrl", pictureUrl);
         editor.apply();

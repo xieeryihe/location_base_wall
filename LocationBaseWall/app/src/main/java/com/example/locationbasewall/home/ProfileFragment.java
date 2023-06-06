@@ -1,6 +1,5 @@
 package com.example.locationbasewall.home;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,18 +25,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.locationbasewall.R;
-import com.example.locationbasewall.adapter.PostAdapter;
 import com.example.locationbasewall.login.LoginActivity;
-import com.example.locationbasewall.utils.DataGetter;
 import com.example.locationbasewall.utils.LocalUserInfo;
-import com.example.locationbasewall.utils.MyToast;
-import com.example.locationbasewall.utils.Post;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -84,10 +75,11 @@ public class ProfileFragment extends Fragment {
 
         LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
 
-        profileIdTextView.setText("ID:" + localUserInfo.getId());
-        textViewUsername.setText("用户名:" + localUserInfo.getUsername());
+        System.out.println("邮箱是"+localUserInfo.getEmail());
+        profileIdTextView.setText("ID: " + localUserInfo.getId());
+        textViewUsername.setText("用户名: " + localUserInfo.getUsername());
         textViewEmail.setText("邮箱：" + localUserInfo.getEmail());
-        textViewPhone.setText("手机号:" + localUserInfo.getPhonenum());
+        textViewPhone.setText("手机号: " + localUserInfo.getPhonenum());
 
 
         String user_picture = localUserInfo.getPicture();
@@ -125,14 +117,6 @@ public class ProfileFragment extends Fragment {
             if (isEditMode) {
                 // 编辑模式时按钮文字为“提交”，点击按钮，回到浏览模式
 
-                // 1. 发送数据
-                String username = editTextName.getText().toString();
-                String email = editTextEmail.getText().toString();
-                String phonenum = editTextPhone.getText().toString();
-
-
-
-                // 2. 修改UI
                 textViewUsername.setVisibility(View.VISIBLE);
                 textViewEmail.setVisibility(View.VISIBLE);
                 textViewPhone.setVisibility(View.VISIBLE);
@@ -161,6 +145,19 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isEditMode){
+                    // 如果点击了“保存”，则提交数据
+                    String username = editTextName.getText().toString();
+                    String email = editTextEmail.getText().toString();
+                    String phonenum = editTextPhone.getText().toString();
+
+
+                }
+            }
+        });
         // 初始化 ActivityResultLauncher
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
             result -> {

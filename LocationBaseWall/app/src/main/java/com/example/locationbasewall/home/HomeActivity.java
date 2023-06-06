@@ -90,6 +90,4 @@ public class HomeActivity extends AppCompatActivity {
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
-
-
 }
