@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,6 +34,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.adapter.CommentAdapter;
 import com.example.locationbasewall.utils.Comment;
@@ -49,7 +51,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +93,6 @@ public class PostDetailActivity extends AppCompatActivity {
     private RecyclerView commentsRecycleView;
     private ArrayList<Comment> commentList; // 评论列表（复用了Post的构造）
     private CommentAdapter commentAdapter;
-    boolean isShowVideo = false;  // 帖子的media数据是否是视频
 
     private Post mPost;
     private Uri mediaUri;
@@ -446,8 +446,6 @@ public class PostDetailActivity extends AppCompatActivity {
         });
 
 
-
-
         // 4. 处理评论部分
 
         // 一般情况下，“发表”按钮不显示，点击编辑框之后才显现
@@ -561,25 +559,6 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // TODO 图像点击显示大图
-                System.out.println("是否是视频内容：");
-                System.out.println(isShowVideo);
-                if (isShowVideo){
-                    // 视频照片，点击播放视频
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    System.out.println(mediaUri);
-                    intent.setDataAndType(Uri.parse(String.valueOf(mediaUri)), "video/*");
-
-                    // 检查设备是否有支持播放视频的应用
-                    PackageManager packageManager = getPackageManager();
-                    if (intent.resolveActivity(packageManager) != null) {
-                        // 启动播放器
-                        startActivity(intent);
-                    } else {
-                        // 没有找到支持播放视频的应用，显示错误信息或进行其他处理
-                        MyToast.show(mContext, "没有可支持的播放应用");
-                    }
-                }
             }
         });
 
@@ -643,113 +622,71 @@ public class PostDetailActivity extends AppCompatActivity {
             });
 
             // 2.获取图片信息
-            OkHttpClient client = new OkHttpClient();
+
 
             // 2.1 获取头像图片
-            Request user_request = new Request.Builder()
-                    .url(user_picture)
-                    .build();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 获取布局中ImageView的宽度和高度
+                    int targetWidth = postDetailUserImageView.getWidth();
+                    int targetHeight = postDetailUserImageView.getHeight();
+                    RequestOptions requestOptions = new RequestOptions()
+                            .centerCrop() // 根据需要进行裁剪或缩放
+                            .override(targetWidth, targetHeight); // 设置图片大小为ImageView的大小
 
-            client.newCall(user_request).enqueue(new Callback() {
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    // 获取响应数据
-                    if (response.isSuccessful()) {
-                        // 从响应中获取图片的字节数组
-                        byte[] imageData = Objects.requireNonNull(response.body()).bytes();
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                postDetailUserImageView.setImageBitmap(bitmap);
-                            }
-                        });
-                    }
-                }
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    // 请求失败处理
-                    e.printStackTrace();
+                    Glide.with(mContext)
+                            .load(mPost.getImageUrl())
+                            .apply(requestOptions)
+                            .into(postDetailUserImageView);
                 }
             });
 
 
             // 2.2 获取媒体数据
             if (content_type.equals("1")){
-                Request media_request = new Request.Builder()
-                        .url(media_url)
-                        .build();
-
                 // 文件后缀名
-                String extension = media_url.substring(media_url.lastIndexOf('.') + 1).toLowerCase();
 
-                if (extension.equals("jpg") || extension.equals("jpeg") || extension.equals("png") || extension.equals("gif")) {
-                    isShowVideo = false;
+                if (isImageFile(media_url)) {
                     // 文件是图片
-                    client.newCall(media_request).enqueue(new Callback() {
+                    System.out.println("媒体资源为图片，url为：");
+                    System.out.println(media_url);
+                    // 在主线程上加载图片缩略图并显示到ImageView
+                    runOnUiThread(new Runnable() {
                         @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            // 获取响应数据
-                            if (response.isSuccessful()) {
-                                // 从响应中获取媒体的字节数组
-                                byte[] imageData = Objects.requireNonNull(response.body()).bytes();
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        postDetailShowImageView.setVisibility(View.VISIBLE);
-                                        postDetailShowImageView.setImageBitmap(bitmap);
-                                        postDetailEditImageView.setImageBitmap(bitmap);
-                                    }
-                                });
+                        public void run() {
+                            RequestOptions requestOptions = new RequestOptions()
+                                    .centerCrop() // 根据需要进行裁剪或缩放
+                                    .override(200, 200); // 设置缩略图的大小，这里是200x200像素
 
-                            }
-                        }
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            // 请求失败处理
-                            e.printStackTrace();
+                            Glide.with(mContext)
+                                    .load(mPost.getMediaUrl())
+                                    .apply(requestOptions)
+                                    .into(postDetailShowImageView);
                         }
                     });
 
-                } else if (extension.equals("mp4") || extension.equals("avi") || extension.equals("mov") || extension.equals("wmv")) {
+
+                } else if (isVideoFile(media_url)) {
                     // 文件是视频
-                    isShowVideo = true;
-                    client.newCall(media_request).enqueue(new Callback() {
+                    System.out.println("媒体资源为视频，url为：");
+                    System.out.println(media_url);
+
+                    // 在主线程上加载视频缩略图并显示到ImageView
+                    runOnUiThread(new Runnable() {
                         @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            // 获取响应数据
-                            if (response.isSuccessful()) {
-                                // 从响应中获取视频的字节数组
-                                byte[] videoData = Objects.requireNonNull(response.body()).bytes();
+                        public void run() {
+                            RequestOptions requestOptions = new RequestOptions()
+                                    .frame(1000000) // 设置为一个足够大的帧时间，以获取视频的缩略图
+                                    .centerCrop() // 根据需要进行裁剪或缩放
+                                    .override(200, 200) // 设置缩略图的大小，这里是200x200像素
+                                    .diskCacheStrategy(DiskCacheStrategy.DATA); // 仅使用数据缓存，不使用磁盘缓存完整视频数据
 
-                                // 使用 MediaMetadataRetriever 提取视频的第一帧图像
-                                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                                retriever.setDataSource(String.valueOf(new ByteArrayInputStream(videoData)));
-                                Bitmap thumbnail = retriever.getFrameAtTime();
-                                retriever.release();
-
-                                // 在UI线程中更新UI
-                                Handler handler = new Handler(Looper.getMainLooper());
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // 创建一个VideoView并设置视频数据源
-                                        // postDetailShowVideoView.setVideoPath(media_url);
-                                        postDetailShowImageView.setImageBitmap(thumbnail);
-                                        postDetailEditImageView.setImageBitmap(thumbnail);
-
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            // 请求失败处理
-                            e.printStackTrace();
+                            Glide.with(mContext)
+                                    .asBitmap() // 显示为Bitmap对象
+                                    .load(mPost.getMediaUrl())
+                                    .apply(requestOptions)
+                                    .into(postDetailShowImageView);
                         }
                     });
 
@@ -827,6 +764,27 @@ public class PostDetailActivity extends AppCompatActivity {
         return mimeType != null && mimeType.startsWith("video/");
     }
 
+    public boolean isImageFile(String filePath) {
+        String extension = getFileExtension(filePath);
+        return extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg") ||
+                extension.equalsIgnoreCase("png") || extension.equalsIgnoreCase("gif");
+    }
+
+    public boolean isVideoFile(String filePath) {
+        String extension = getFileExtension(filePath);
+        return extension.equalsIgnoreCase("mp4") || extension.equalsIgnoreCase("avi") ||
+                extension.equalsIgnoreCase("mov") || extension.equalsIgnoreCase("wmv");
+    }
+
+
+    public String getFileExtension(String filePath) {
+        String extension = "";
+        int dotIndex = filePath.lastIndexOf(".");
+        if (dotIndex >= 0 && dotIndex < filePath.length() - 1) {
+            extension = filePath.substring(dotIndex + 1).toLowerCase();
+        }
+        return extension;
+    }
 
     private Bitmap getVideoThumbnail(Uri videoUri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();

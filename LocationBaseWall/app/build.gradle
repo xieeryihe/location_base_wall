@@ -52,4 +52,7 @@ dependencies {
 
     implementation 'pub.devrel:easypermissions:3.0.0'
 
+    implementation 'com.github.bumptech.glide:glide:4.15.1'  // 用于图片和视频处理
+
+
 }
