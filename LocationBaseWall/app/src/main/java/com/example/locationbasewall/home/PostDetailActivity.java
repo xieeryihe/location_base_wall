@@ -7,15 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.MotionEvent;
 import android.view.View;
@@ -95,7 +90,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private CommentAdapter commentAdapter;
 
     private Post mPost;
-    private Uri mediaUri;
+    private Uri mediaUri;  // 所有请求数据的媒体uri
     private int mEditContentType = 0;  // 用于记录修改帖子后的文本类型
     private Context mContext;
 
@@ -151,7 +146,6 @@ public class PostDetailActivity extends AppCompatActivity {
             postDetailEditPostButton.setVisibility(View.GONE);
         }
 
-
         galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
@@ -160,26 +154,33 @@ public class PostDetailActivity extends AppCompatActivity {
                             mediaUri = data.getData();
                             if (mediaUri != null) {
                                 if (isVideoFile(mediaUri)) {
-                                    // 是视频文件，获取视频的缩略图
-                                    Bitmap thumbnail = getVideoThumbnail(mediaUri);
-                                    if (thumbnail != null) {
-                                        postDetailEditImageView.setImageBitmap(thumbnail);
-                                    }
-                                } else {
-                                    // 是图像文件，直接显示图像
-                                    // postMediaImageView.setImageURI(mediaUri);
-                                    Bitmap thumbnail = getImageThumbnail(mediaUri);
-                                    if (thumbnail != null) {
-                                        postDetailEditImageView.setImageBitmap(thumbnail);
-                                    }
-                                }
+                                    RequestOptions requestOptions = new RequestOptions()
+                                            .frame(1000000) // 设置为一个足够大的帧时间，以获取视频的缩略图
+                                            .centerCrop() // 根据需要进行裁剪或缩放
+                                            .override(postDetailEditImageView.getWidth(), postDetailEditImageView.getHeight());
 
+                                    Glide.with(mContext)
+                                            .load(mediaUri)
+                                            .apply(requestOptions)
+                                            .into(postDetailEditImageView);
+                                } else {
+                                    RequestOptions requestOptions = new RequestOptions()
+                                            .centerCrop()
+                                            .override(postDetailEditImageView.getWidth(), postDetailEditImageView.getHeight());
+
+                                    Glide.with(mContext)
+                                            .load(mediaUri)
+                                            .apply(requestOptions)
+                                            .into(postDetailEditImageView);
+                                }
                             }
                         }
                     }
                 });
 
         postDetailEditImageView.setOnClickListener(v -> openGallery());
+
+
 
         postDetailEditCloseIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -360,7 +361,8 @@ public class PostDetailActivity extends AppCompatActivity {
                 System.out.println("请求链接");
                 System.out.println(targetUrl);
 
-                MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                MultipartBody.Builder putBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                MultipartBody.Builder postBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
                 if(mEditContentType == 1){
                     // 富文本
@@ -381,27 +383,35 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     // 将 multipartBodyPart 添加到 MultipartBody.Builder 中
                     if (multipartBodyPart != null) {
-                        builder.addPart(multipartBodyPart);
+                        postBuilder.addPart(multipartBodyPart);
                     }
                 }else {
                     System.out.println("修改为纯文本内容");
                 }
 
                 // 添加其他字段
-                builder.addFormDataPart("user_id", user_id);
-                builder.addFormDataPart("title", title);
-                builder.addFormDataPart("text", text);
-                builder.addFormDataPart("content_type",String.valueOf(mEditContentType));
-                RequestBody requestBody = builder.build();
+                putBuilder.addFormDataPart("user_id", user_id);
+                putBuilder.addFormDataPart("title", title);
+                putBuilder.addFormDataPart("text", text);
+                putBuilder.addFormDataPart("content_type",String.valueOf(mEditContentType));
+
+                RequestBody putRequestBody = putBuilder.build();
+                RequestBody postRequestBody = postBuilder.build();
 
                 OkHttpClient client = new OkHttpClient();
                 // 创建请求对象
-                Request request = new Request.Builder()
+                Request putRequest = new Request.Builder()
                         .url(targetUrl)
                         .header("Content-Type", "multipart/form-data")
-                        .put(requestBody)
+                        .put(putRequestBody)
                         .build();
-                client.newCall(request).enqueue(new Callback() {
+
+                Request postRequest = new Request.Builder()
+                        .url(targetUrl)
+                        .header("Content-Type", "multipart/form-data")
+                        .post(postRequestBody)
+                        .build();
+                client.newCall(putRequest).enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         MyToast.show(mContext, "网络请求错误");
@@ -434,6 +444,35 @@ public class PostDetailActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+                DataSender.sendDataToServer(postRequestBody, targetUrl, new DataSender.DataSenderCallback() {
+                    @Override
+                    public void onSuccess(JSONObject jsonObject) {
+                        try {
+                            int code = jsonObject.getInt("code");
+                            String errorMsg = jsonObject.getString("error_msg");
+                            if (code != 0){
+                                // 提交失败
+                                String msg = "error code:" + code + "\nerror_msg" + errorMsg;
+                                MyToast.show(mContext, msg);
+
+                            } else {
+                                // 修改
+                                MyToast.show(mContext, "修改成功");
+                            }
+                        } catch (JSONException e) {
+                            MyToast.show(mContext, "JSON错误");
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        System.out.println(errorMessage);
+                        MyToast.show(mContext, "网络请求错误");
+                    }
+                });
+
             }
         });
 
@@ -663,6 +702,10 @@ public class PostDetailActivity extends AppCompatActivity {
                                     .load(mPost.getMediaUrl())
                                     .apply(requestOptions)
                                     .into(postDetailShowImageView);
+                            Glide.with(mContext)
+                                    .load(mPost.getMediaUrl())
+                                    .apply(requestOptions)
+                                    .into(postDetailEditImageView);
                         }
                     });
 
@@ -784,63 +827,6 @@ public class PostDetailActivity extends AppCompatActivity {
             extension = filePath.substring(dotIndex + 1).toLowerCase();
         }
         return extension;
-    }
-
-    private Bitmap getVideoThumbnail(Uri videoUri) {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(this, videoUri);
-            Bitmap thumbnail = retriever.getFrameAtTime();
-            if (thumbnail != null) {
-                // 缩放和裁剪缩略图以适应 ImageView 的大小
-                int targetWidth = postDetailEditImageView.getWidth();
-                int targetHeight = postDetailEditImageView.getHeight();
-                return scaleAndCropBitmap(thumbnail, targetWidth, targetHeight);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                retriever.release();
-            } catch (RuntimeException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-    private Bitmap getImageThumbnail(Uri imageUri) {
-        try {
-            Bitmap thumbnail = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            int targetWidth = postDetailEditImageView.getWidth();
-            int targetHeight = postDetailEditImageView.getHeight();
-            return scaleAndCropBitmap(thumbnail, targetWidth, targetHeight);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    // 用于缩略图的缩放，以适应显示的大小
-    private Bitmap scaleAndCropBitmap(Bitmap originalBitmap, int targetWidth, int targetHeight) {
-        int width = originalBitmap.getWidth();
-        int height = originalBitmap.getHeight();
-
-        float scaleX = (float) targetWidth / width;
-        float scaleY = (float) targetHeight / height;
-        float scale = Math.max(scaleX, scaleY);
-
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-
-        Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, true);
-
-        int startX = (scaledBitmap.getWidth() - targetWidth) / 2;
-        int startY = (scaledBitmap.getHeight() - targetHeight) / 2;
-        Bitmap croppedBitmap = Bitmap.createBitmap(scaledBitmap, startX, startY, targetWidth, targetHeight);
-
-        originalBitmap.recycle();
-        scaledBitmap.recycle();
-
-        return croppedBitmap;
     }
 
     private String getImagePathFromUri(Context context, Uri uri) {
