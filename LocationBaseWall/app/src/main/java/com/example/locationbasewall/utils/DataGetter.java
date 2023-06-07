@@ -99,17 +99,13 @@ public class DataGetter {
                         try {
                             int code = jsonObject.getInt("code");
                             String errorMsg = jsonObject.getString("error_msg");
-                            System.out.println("our code :" + code);
                             if (code != 0 && code != 1 && code != 2 && code != 4) {
                                 // 获取数据失败
                                 String msg = "error code:" + code + "\nerror_msg" + errorMsg;
                                 MyToast.show(context,msg);
                             } else {
                                 JSONObject data = jsonObject.getJSONObject("data");
-
                                 ret = processPostOverviewData(data,postAdapter.getPostList());
-                                System.out.println("获取的post列表长度为：");
-                                System.out.println(ret);
 
                                 activity.runOnUiThread(new Runnable() {
                                     @SuppressLint("NotifyDataSetChanged")
@@ -117,7 +113,6 @@ public class DataGetter {
                                     public void run() {
                                         // 更新UI组件的代码
                                         postAdapter.notifyDataSetChanged();
-
                                     }
                                 });
 

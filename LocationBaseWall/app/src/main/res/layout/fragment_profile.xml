@@ -31,7 +31,7 @@
                     android:layout_weight="0.2"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/img2"
+                    android:src="@drawable/default_img"
                     />
                 <ImageView
                     android:id="@+id/profileEditImageView"
@@ -41,7 +41,7 @@
                     android:layout_weight="0.2"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/img2"
+                    android:src="@drawable/default_img"
                     android:visibility="gone"
                     />
                 <View

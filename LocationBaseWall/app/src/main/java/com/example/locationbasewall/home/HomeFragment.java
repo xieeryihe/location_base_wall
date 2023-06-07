@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
     private Context context;
 
     int page_num = 1;
-    int page_size = 5;
+    int page_size = 10;
 
     // 线程安全的锁来修改page_num
     private final Object lock = new Object();

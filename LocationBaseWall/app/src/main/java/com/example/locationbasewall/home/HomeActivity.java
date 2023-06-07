@@ -26,9 +26,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-//        LocalUserInfo localUserInfo = new LocalUserInfo(getApplicationContext());
-//        localUserInfo.clearUserInfo();
-
         fragmentManager = getSupportFragmentManager();
 
         // 设置默认的 HomeFragment

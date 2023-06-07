@@ -52,7 +52,7 @@
                         android:layout_weight="0.4"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/img2" />
+                        android:src="@drawable/default_img" />
                     <!--如下两个属性要组合使用才能使得元素宽度自适应高度、等比例缩放-->
                     <!--android:adjustViewBounds="true"-->
                     <!--android:scaleType="fitCenter"-->
