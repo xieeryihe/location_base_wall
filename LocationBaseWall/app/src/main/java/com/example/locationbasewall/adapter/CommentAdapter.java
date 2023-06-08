@@ -1,5 +1,6 @@
 package com.example.locationbasewall.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.utils.Comment;
+import com.example.locationbasewall.utils.DataSender;
+import com.example.locationbasewall.utils.MyToast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,21 +32,25 @@ import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
-    private ArrayList<Comment> commentList;
+    private ArrayList<Comment> mCommentList;
     private CommentAdapter.OnItemClickListener onItemClickListener;
     private Context mContext;
+    String mCurrentUid;
     public interface OnItemClickListener {
         void onItemClick(Comment comment);
     }
 
-    public CommentAdapter(Context context, ArrayList<Comment> commentList, OnItemClickListener onItemClickListener) {
+    public CommentAdapter(Context context, String currentUid, ArrayList<Comment> CommentList, OnItemClickListener onItemClickListener) {
         this.mContext = context;
-        this.commentList = commentList;
+        this.mCurrentUid = currentUid;
+        this.mCommentList = CommentList;
         this.onItemClickListener = onItemClickListener;
 
     }
@@ -53,13 +64,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
-        Comment comment = commentList.get(position);
+        Comment comment = mCommentList.get(position);
         holder.bind(comment);
     }
 
     @Override
     public int getItemCount() {
-        return commentList.size();
+        return mCommentList.size();
     }
 
     public class CommentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -68,6 +79,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         private TextView commentIPTextView;
         private TextView commentContentTextView;
         private ImageView commentMediaImageView;
+        private Button commentDeleteButton;
 
         private CommentAdapter.OnItemClickListener onItemClickListener;
 
@@ -78,6 +90,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             commentIPTextView = itemView.findViewById(R.id.commentIPTextView);
             commentContentTextView = itemView.findViewById(R.id.commentContentTextView);
             commentMediaImageView = itemView.findViewById(R.id.commentMediaImageView);
+            commentDeleteButton = itemView.findViewById(R.id.commentDeleteButton);
 
             this.onItemClickListener = onItemClickListener;
             itemView.setOnClickListener(this);
@@ -85,6 +98,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
 
         public void bind(Comment comment) {
+            if (mCurrentUid.equals(comment.getUser_id())){
+                commentDeleteButton.setVisibility(View.VISIBLE);
+            }else {
+                commentDeleteButton.setVisibility(View.GONE);
+            }
 
             String user_picture = comment.getUser_picture();
             String mediaUrl = comment.getMedia_url();
@@ -127,7 +145,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 commentMediaImageView.setVisibility(View.VISIBLE);
                 handler.post(new Runnable() {
 
-
                     @Override
                     public void run() {
                         System.out.println("加载评论图片");
@@ -148,13 +165,60 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 commentMediaImageView.setVisibility(View.GONE);
             }
 
+            // 设置删除逻辑
+            commentDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String user_id = comment.getUser_id();
+                    String comment_id = comment.getId();
+                    String targetUrl = "http://121.43.110.176:8000/api/comment/delete";
+                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+
+                    Context context = mContext;
+
+                    builder.addFormDataPart("user_id", user_id);
+                    builder.addFormDataPart("comment_id", comment_id);
+                    RequestBody requestBody = builder.build();
+
+                    DataSender.sendDataToServer(requestBody, targetUrl, new DataSender.DataSenderCallback() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onSuccess(JSONObject jsonObject) {
+                            // 网络请求成功
+                            try {
+                                int code = jsonObject.getInt("code");
+                                String errorMsg = jsonObject.getString("error_msg");
+                                if (code != 0){
+
+                                    String msg = "error code:" + code + "\nerror_msg" + errorMsg;
+                                    MyToast.show(context,msg);
+                                } else {
+                                    MyToast.show(context, "删除评论成功");
+                                    mCommentList.remove(comment);
+                                    notifyDataSetChanged();
+                                }
+                            } catch (JSONException e) {
+                                MyToast.show(context, "JSON错误");
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            System.out.println(errorMessage);
+                            MyToast.show(context, "网络请求错误");
+                        }
+                    });
+                }
+            });
+
         }
 
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                Comment comment = commentList.get(position);
+                Comment comment = mCommentList.get(position);
                 onItemClickListener.onItemClick(comment);
             }
         }

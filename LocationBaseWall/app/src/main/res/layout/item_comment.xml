@@ -32,7 +32,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.13"
+                    android:layout_weight="0.15"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
                     android:src="@drawable/default_img" />
@@ -41,7 +41,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_weight="0.87"
+                    android:layout_weight="0.85"
                     android:weightSum="1">
                     <TextView
                         android:id="@+id/commentUsernameTextView"
@@ -64,6 +64,13 @@
                         android:gravity="center_vertical"/>
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/commentDeleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="删除评论"
+                    android:layout_gravity="center"
+                    />
             </LinearLayout>
 
             <TextView

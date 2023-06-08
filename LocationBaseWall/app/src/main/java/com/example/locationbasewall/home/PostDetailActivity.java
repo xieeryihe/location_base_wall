@@ -288,7 +288,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         commentList = new ArrayList<>(); // 初始化帖子数据列表
 
                         processComments(data,commentList);
-                        commentAdapter = new CommentAdapter(mContext, commentList, comment -> {
+                        commentAdapter = new CommentAdapter(mContext,user_id, commentList, comment -> {
                             // TODO 评论的点击事件
                         });
 
