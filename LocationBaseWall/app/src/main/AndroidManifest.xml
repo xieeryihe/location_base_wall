@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
-    <!-- 为正确使用MediaMetadataRetriever，需要添加如下权限信息 -->
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
+    <!--为了使用高德地图API添加的权限-->
     <!--用于访问网络，网络定位需要上网-->
     <uses-permission android:name="android.permission.INTERNET" />
     <!--用于读取手机当前的状态-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!--用于写入缓存数据到扩展存储卡-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <!--用于申请调用A-GPS模块-->
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
@@ -27,6 +28,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!--用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <!--所需其余权限-->
+
 
 
     <application
@@ -44,6 +48,8 @@
 
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
+
+
         >
 
 
@@ -53,8 +59,6 @@
         <meta-data android:name="com.amap.api.v2.apikey" android:value="3092e94c8604ea50aa2acd88184a5372"/>
         <!--台式机上的调试key-->
 <!--        <meta-data android:name="com.amap.api.v2.apikey" android:value="750088b13abd576393a4242c5116c14b"/>-->
-
-
 
 
 

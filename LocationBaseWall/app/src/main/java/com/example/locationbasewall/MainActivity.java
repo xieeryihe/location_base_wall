@@ -1,5 +1,7 @@
 package com.example.locationbasewall;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +22,6 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.example.locationbasewall.home.HomeActivity;
 import com.example.locationbasewall.login.LoginActivity;
-import com.example.locationbasewall.utils.MyToast;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -49,7 +50,8 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         requestPermission();
 
         // 获取存储权限
-        // requestStoragePermission();
+        requestStoragePermission();
+        requestPermission2();
 
 
         LinearLayout mainLayout = findViewById(R.id.layout_main);
@@ -177,5 +179,16 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
                     REQUEST_PERMISSION_CODE);
         }
     }
+
+
+    public void requestPermission2() {
+        int permission_read = ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permission_read != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
+        }
+    }
+
+
 
 }
