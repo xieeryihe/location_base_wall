@@ -28,7 +28,7 @@
                 >
 
                 <ImageView
-                    android:id="@+id/commentImageView"
+                    android:id="@+id/commentUserImageView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -79,11 +79,18 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/commentMediaImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/default_img"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:visibility="gone"
+            />
+
+
     </LinearLayout>
 
-    <!--    <View-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="1dp"-->
-    <!--        android:background="@color/teal_200"/>-->
 
 </LinearLayout>

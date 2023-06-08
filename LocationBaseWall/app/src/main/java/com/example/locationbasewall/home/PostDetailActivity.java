@@ -19,8 +19,6 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,8 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.adapter.CommentAdapter;
 import com.example.locationbasewall.utils.Comment;
@@ -73,8 +69,13 @@ public class PostDetailActivity extends AppCompatActivity {
     private TextView postDetailContentTextView;  // 显示和修改内容的视图
     private EditText postDetailContentEditText;
 
+    // 评论部分
     private EditText postDetailCommentEditText;
     private Button postDetailCommentButton;
+    private Button postDetailChooseImgButton;
+    private ImageView postDetailCommentImageView;
+
+
 
     private FrameLayout postDetailEditImageFrameLayout;
 
@@ -82,17 +83,21 @@ public class PostDetailActivity extends AppCompatActivity {
     private ImageView postDetailEditImageView;
     private ImageView postDetailEditCloseIcon;
 
+    // 非视图类资源
+
     private RecyclerView commentsRecycleView;
     private ArrayList<Comment> commentList; // 评论列表（复用了Post的构造）
     private CommentAdapter commentAdapter;
 
     private Post mPost;
-    private Uri mUploadMediaUri;  // 上传媒体资源用到的uri（比如从相册选图片）
+    private Uri mEditMediaUri = null;  // 编辑帖子界面，上传媒体资源用到的uri（比如从相册选图片）
+    private Uri mCommentMediaUri = null;  // 评论界面，上传媒体资源用到的uri
     private int mEditContentType = 0;  // 用于记录修改帖子后的文本类型
     private Context mContext;
 
 
-    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<Intent> editGalleryLauncher;  // 编辑帖子的launcher
+    private ActivityResultLauncher<Intent> commentGalleryLauncher;  // 评论的launcher
 
 
     @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
@@ -124,13 +129,15 @@ public class PostDetailActivity extends AppCompatActivity {
 
         postDetailCommentEditText = findViewById(R.id.postDetailCommentEditText);
         postDetailCommentButton = findViewById(R.id.postDetailCommentButton);
+        postDetailChooseImgButton = findViewById(R.id.postDetailChooseImgButton);
+        postDetailCommentImageView = findViewById(R.id.postDetailCommentImageView);
 
         commentsRecycleView = findViewById(R.id.commentsRecycleView);
         // 要加布局管理器
         commentsRecycleView.setLayoutManager(new LinearLayoutManager(PostDetailActivity.this));
 
 
-        LocalUserInfo localUserInfo = new LocalUserInfo(getApplicationContext());
+        LocalUserInfo localUserInfo = new LocalUserInfo(mContext);
         String user_id = localUserInfo.getId();
         String post_id = getIntent().getStringExtra("post_id");
         String publisher_id = getIntent().getStringExtra("publisher_id");
@@ -143,21 +150,21 @@ public class PostDetailActivity extends AppCompatActivity {
             postDetailEditPostButton.setVisibility(View.GONE);
         }
 
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+        editGalleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null) {
-                            mUploadMediaUri = data.getData();
-                            if (mUploadMediaUri != null) {
-                                if (Media.isVideoFile(mContext, mUploadMediaUri)) {
+                            mEditMediaUri = data.getData();
+                            if (mEditMediaUri != null) {
+                                if (Media.isVideoFile(mContext, mEditMediaUri)) {
                                     RequestOptions requestOptions = new RequestOptions()
                                             .frame(1000000) // 设置为一个足够大的帧时间，以获取视频的缩略图
                                             .centerCrop() // 根据需要进行裁剪或缩放
                                             .override(postDetailEditImageView.getWidth(), postDetailEditImageView.getHeight());
 
                                     Glide.with(mContext)
-                                            .load(mUploadMediaUri)
+                                            .load(mEditMediaUri)
                                             .apply(requestOptions)
                                             .into(postDetailEditImageView);
                                 } else {
@@ -166,7 +173,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                             .override(postDetailEditImageView.getWidth(), postDetailEditImageView.getHeight());
 
                                     Glide.with(mContext)
-                                            .load(mUploadMediaUri)
+                                            .load(mEditMediaUri)
                                             .apply(requestOptions)
                                             .into(postDetailEditImageView);
                                 }
@@ -175,13 +182,49 @@ public class PostDetailActivity extends AppCompatActivity {
                     }
                 });
 
-        postDetailEditImageView.setOnClickListener(v -> Media.openGallery(galleryLauncher));
+        postDetailEditImageView.setOnClickListener(v -> Media.openGallery(editGalleryLauncher));
+
+        commentGalleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            mCommentMediaUri = data.getData();
+                            if (mCommentMediaUri != null) {
+                                System.out.println("在选图里面："+mCommentMediaUri);
+                                postDetailCommentImageView.setVisibility(View.VISIBLE);
+                                if (Media.isVideoFile(mContext, mCommentMediaUri)) {
+                                    RequestOptions requestOptions = new RequestOptions()
+                                            .frame(1000000) // 设置为一个足够大的帧时间，以获取视频的缩略图
+                                            .centerCrop() // 根据需要进行裁剪或缩放
+                                            .override(postDetailCommentImageView.getWidth(), postDetailCommentImageView.getHeight());
+
+                                    Glide.with(mContext)
+                                            .load(mCommentMediaUri)
+                                            .apply(requestOptions)
+                                            .into(postDetailCommentImageView);
+                                } else {
+                                    RequestOptions requestOptions = new RequestOptions()
+                                            .centerCrop()
+                                            .override(postDetailCommentImageView.getWidth(), postDetailCommentImageView.getHeight());
+
+                                    Glide.with(mContext)
+                                            .load(mCommentMediaUri)
+                                            .apply(requestOptions)
+                                            .into(postDetailCommentImageView);
+                                }
+                            }
+                        }
+                    }
+                });
+
+        postDetailChooseImgButton.setOnClickListener(v -> Media.openGallery(commentGalleryLauncher));
 
 
 
         // 点击图片右上角的叉叉，删除选择的图片
         postDetailEditCloseIcon.setOnClickListener(v -> {
-            mUploadMediaUri = null;
+            mEditMediaUri = null;
             MyToast.show(mContext, "已清除原图片");
             @SuppressLint("UseCompatLoadingForDrawables") Drawable drawable = getResources().getDrawable(R.drawable.default_img);
             postDetailEditImageView.setImageDrawable(drawable);  // 恢复默认图片
@@ -191,7 +234,6 @@ public class PostDetailActivity extends AppCompatActivity {
         // 1. 获取帖子详情部分
         String targetUrl = "http://121.43.110.176:8000/api/post/" + "?post_id=" + post_id;
         DataGetter.getDataFromServer(targetUrl, new DataGetter.DataGetterCallback() {
-            final Context context = getApplicationContext();
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(JSONObject jsonObject) {
@@ -201,13 +243,13 @@ public class PostDetailActivity extends AppCompatActivity {
                     if (code != 0){
                         // 获取数据失败
                         String msg = "error code:" + code + "\nerror_msg" + errorMsg;
-                        MyToast.show(context,msg);
+                        MyToast.show(mContext,msg);
                     } else {
                         JSONObject data = jsonObject.getJSONObject("data");
                         processAndSetPost(data);
                     }
                 } catch (JSONException e) {
-                    MyToast.show(context, "JSON错误");
+                    MyToast.show(mContext, "JSON错误");
                     e.printStackTrace();
                 }
             }
@@ -215,7 +257,7 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
                 System.out.println(errorMessage);
-                MyToast.show(context, "网络请求错误");
+                MyToast.show(mContext, "网络请求错误");
             }
         });
 
@@ -246,7 +288,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         commentList = new ArrayList<>(); // 初始化帖子数据列表
 
                         processComments(data,commentList);
-                        commentAdapter = new CommentAdapter(commentList, comment -> {
+                        commentAdapter = new CommentAdapter(mContext, commentList, comment -> {
                             // TODO 评论的点击事件
                         });
 
@@ -325,7 +367,7 @@ public class PostDetailActivity extends AppCompatActivity {
         postDetailSavePostButton.setOnClickListener(v -> {
             String title = postDetailTitleEditText.getText().toString();
             String text = postDetailContentEditText.getText().toString();
-            if (mUploadMediaUri != null) {
+            if (mEditMediaUri != null) {
                 // Rich text mode
                 mEditContentType = 1;
             } else {
@@ -346,10 +388,10 @@ public class PostDetailActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
 
             // 如果为富文本，先使用Post请求发送媒体数据
-            if(mUploadMediaUri != null){
+            if(mEditMediaUri != null){
                 System.out.println("媒体数据");
-                System.out.println(mUploadMediaUri);
-                String mediaUriStorage = Media.getImagePathFromUri(mContext, mUploadMediaUri);
+                System.out.println(mEditMediaUri);
+                String mediaUriStorage = Media.getImagePathFromUri(mContext, mEditMediaUri);
                 File file = new File(mediaUriStorage);
                 // 添加图片部分
                 String fieldName = "media";  // 字段名
@@ -358,7 +400,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 MultipartBody.Part multipartBodyPart = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
                     try {
-                        multipartBodyPart = Media.buildMultipartBodyPart(mContext, mUploadMediaUri, fieldName, fileName);
+                        multipartBodyPart = Media.buildMultipartBodyPart(mContext, mEditMediaUri, fieldName, fileName);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -458,7 +500,7 @@ public class PostDetailActivity extends AppCompatActivity {
         // 3.4 点击“取消”按钮
         postDetailCancelPostButton.setOnClickListener(v -> {
             setShowPage();
-            mUploadMediaUri = null;
+            mEditMediaUri = null;
         });
 
 
@@ -471,16 +513,16 @@ public class PostDetailActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                 postDetailCommentEditText.requestFocus(); // 聚焦光标
-                postDetailCommentButton.setVisibility(View.VISIBLE);
                 return true;
             }
             return false;
         });
 
-        // 点击“评论”按钮
+        // 点击“评论”按钮，发送评论
         postDetailCommentButton.setOnClickListener(v -> {
             /* 1. 整理并发送数据 */
             String text = postDetailCommentEditText.getText().toString();
+
             // 获取位置信息
             Location location = new Location(PostDetailActivity.this);
             location.getCurrentLocation(new Location.LocationCallback() {
@@ -488,20 +530,43 @@ public class PostDetailActivity extends AppCompatActivity {
                 public void onLocationReceived(double latitude, double longitude, String province, String city, String address) {
                     /* 由于地理位置的获取是异步的，所以发送数据的逻辑写到回调函数里 */
 
-                    String targetUrl13 = "http://121.43.110.176:8000/api/comment";
+                    String targetUrl = "http://121.43.110.176:8000/api/comment";
 
                     MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                    String content_type = "0";
+                    if (mCommentMediaUri != null){
+                        System.out.println("评论的uri为");
+                        System.out.println(mCommentMediaUri);
+                        content_type = "1";
+                        String mediaUriStorage = Media.getImagePathFromUri(mContext, mCommentMediaUri);
+                        File file = new File(mediaUriStorage);
+                        // 添加图片部分
+                        String fieldName = "media";  // 字段名
+                        String fileName = file.getName();  // 文件名
 
-                    Context context = getApplicationContext();
+                        MultipartBody.Part multipartBodyPart = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                            try {
+                                multipartBodyPart = Media.buildMultipartBodyPart(mContext, mCommentMediaUri, fieldName, fileName);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+
+                        if (multipartBodyPart != null) {
+                            builder.addPart(multipartBodyPart);
+                        }
+                    }
+
 
                     builder.addFormDataPart("user_id", user_id);
                     builder.addFormDataPart("post_id", post_id);
                     builder.addFormDataPart("text", text);
-                    builder.addFormDataPart("content_type",String.valueOf(mPost.getContentType()));
+                    builder.addFormDataPart("content_type",content_type);
                     builder.addFormDataPart("ip_address",province);
                     RequestBody requestBody = builder.build();
 
-                    DataSender.sendDataToServer(requestBody, targetUrl13, new DataSender.DataSenderCallback() {
+                    DataSender.sendDataToServer(requestBody, targetUrl, new DataSender.DataSenderCallback() {
                         @Override
                         public void onSuccess(JSONObject jsonObject) {
                             // 网络请求成功
@@ -510,19 +575,21 @@ public class PostDetailActivity extends AppCompatActivity {
                                 String errorMsg = jsonObject.getString("error_msg");
                                 if (code != 0){
                                     String msg = "error code:" + code + "\nerror_msg" + errorMsg;
-                                    MyToast.show(context,msg);
+                                    MyToast.show(mContext,msg);
 
                                 } else {
                                     // 发表成功
-                                    MyToast.show(context, "评论成功");
+                                    MyToast.show(mContext, "评论成功");
                                     runOnUiThread(() -> {
                                         // 更新UI组件
                                         commentAdapter.notifyDataSetChanged();
                                         commentsRecycleView.setAdapter(commentAdapter);
+                                        // 发表成功后，重置Uri
+                                        mCommentMediaUri = null;
                                     });
                                 }
                             } catch (JSONException e) {
-                                MyToast.show(context, "JSON错误");
+                                MyToast.show(mContext, "JSON错误");
                                 e.printStackTrace();
                             }
                         }
@@ -530,7 +597,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(String errorMessage) {
                             System.out.println(errorMessage);
-                            MyToast.show(context, "网络请求错误");
+                            MyToast.show(mContext, "网络请求错误");
                         }
                     });
 
@@ -547,13 +614,13 @@ public class PostDetailActivity extends AppCompatActivity {
             /* 2.处理UI */
 
             // 不显示“评论”按钮
-            postDetailCommentButton.setVisibility(View.GONE);
             // 收起键盘
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(postDetailCommentEditText.getWindowToken(), 0);
             // 重置评论框
             postDetailCommentEditText.setText("");
-
+            postDetailCommentImageView.setVisibility(View.GONE);
+            // 设置评论为空
         });
 
 
@@ -566,8 +633,6 @@ public class PostDetailActivity extends AppCompatActivity {
             intent.putExtra("mediaUrl", downloadMediaUrl);
             startActivity(intent);
         });
-
-
 
     }
 
@@ -591,6 +656,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 String ip_address = item.getString("ip_address");
                 Comment comment = new Comment(id, user_id, username, user_picture, text, content_type, media_url,ip_address, date);
                 commentList.add(comment);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -645,7 +711,6 @@ public class PostDetailActivity extends AppCompatActivity {
             // 2.2 获取媒体数据
             if (content_type.equals("1")){
                 // 文件后缀名
-
                 if (Media.isImageFile(media_url)) {
                     // 文件是图片
                     // 在主线程上加载图片缩略图并显示到ImageView
@@ -668,12 +733,14 @@ public class PostDetailActivity extends AppCompatActivity {
                 } else if (Media.isVideoFile(media_url)) {
                     // 文件是视频
                     // 在主线程上加载视频缩略图并显示到ImageView
+                    System.out.println("是视频");
+
                     runOnUiThread(() -> {
                         RequestOptions requestOptions = new RequestOptions()
-                                .frame(1000) // 设置为一个足够大的帧时间，以获取视频的缩略图
+                                .frame(10000) // 设置为一个足够大的帧时间，以获取视频的缩略图
                                 .centerCrop() // 根据需要进行裁剪或缩放
                                 .override(200, 200) // 设置缩略图的大小，这里是200x200像素
-                                .diskCacheStrategy(DiskCacheStrategy.DATA); // 仅使用数据缓存，不使用磁盘缓存完整视频数据
+                                .diskCacheStrategy(DiskCacheStrategy.ALL); // 仅使用数据缓存，不使用磁盘缓存完整视频数据
 
                         Glide.with(mContext)
                                 .asBitmap() // 显示为Bitmap对象
