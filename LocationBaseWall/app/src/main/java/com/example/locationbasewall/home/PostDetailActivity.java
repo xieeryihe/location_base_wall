@@ -19,6 +19,8 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.adapter.CommentAdapter;
 import com.example.locationbasewall.utils.Comment;
@@ -55,6 +59,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PostDetailActivity extends AppCompatActivity {
+
     private ImageView postDetailUserImageView;
     private TextView postDetailUsernameTextView;
     private TextView postDetailIPTextView;
@@ -556,7 +561,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
         // 缩略图点击效果
         postDetailShowImageView.setOnClickListener(v -> {
-
+            String downloadMediaUrl = mPost.getMediaUrl();
+            Intent intent = new Intent(mContext, MediaPlayerActivity.class);
+            intent.putExtra("mediaUrl", downloadMediaUrl);
+            startActivity(intent);
         });
 
 
@@ -640,8 +648,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 if (Media.isImageFile(media_url)) {
                     // 文件是图片
-                    System.out.println("媒体资源为图片，url为：");
-                    System.out.println(media_url);
                     // 在主线程上加载图片缩略图并显示到ImageView
                     runOnUiThread(() -> {
                         RequestOptions requestOptions = new RequestOptions()
@@ -661,13 +667,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 } else if (Media.isVideoFile(media_url)) {
                     // 文件是视频
-                    System.out.println("媒体资源为视频，url为：");
-                    System.out.println(media_url);
-
                     // 在主线程上加载视频缩略图并显示到ImageView
                     runOnUiThread(() -> {
                         RequestOptions requestOptions = new RequestOptions()
-                                .frame(1000000) // 设置为一个足够大的帧时间，以获取视频的缩略图
+                                .frame(1000) // 设置为一个足够大的帧时间，以获取视频的缩略图
                                 .centerCrop() // 根据需要进行裁剪或缩放
                                 .override(200, 200) // 设置缩略图的大小，这里是200x200像素
                                 .diskCacheStrategy(DiskCacheStrategy.DATA); // 仅使用数据缓存，不使用磁盘缓存完整视频数据

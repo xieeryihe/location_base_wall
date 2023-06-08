@@ -6,6 +6,7 @@ buildscript {
         }
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         // 这里指定的是grade的版本，与你自己grade版本对上就可以了
