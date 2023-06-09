@@ -1,34 +1,46 @@
 package com.example.locationbasewall.home;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.locationbasewall.R;
 import com.example.locationbasewall.adapter.PostAdapter;
 import com.example.locationbasewall.utils.DataGetter;
-import com.example.locationbasewall.utils.LocalUserInfo;
-import com.example.locationbasewall.utils.Location;
-import com.example.locationbasewall.utils.MyToast;
-import com.example.locationbasewall.utils.Post;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import java.util.Objects;
 
 public class NearbyFragment extends Fragment {
+    private TextView nearbyFragmentDistanceTextView;
+    private RecyclerView nearbyFragmentRecyclerView;
+    private SeekBar nearbyFragmentDistanceSeekBar;
+    private Button nearbyFragmentConfirmButton;
+    private SwipeRefreshLayout nearbyFragmentSwipeRefreshLayout;
+    private PostAdapter mPostAdapter;
 
-    private RecyclerView recyclerView;
-    private PostAdapter postAdapter;
-    private ArrayList<Post> postList; // 帖子数据列表
+    private Activity mActivity;
+    private Context mContext;
+
+    private int page_num = 1;
+    private int page_size = 10;
+    private int mSeekbarNum = 0;  // 拖动条上的数据
+    private int mDistance = 0;  // 实际距离参数
+
+    // 线程安全的锁来修改page_num
+    private final Object lock = new Object();
 
     public NearbyFragment() {
         // Required empty public constructor
@@ -38,120 +50,126 @@ public class NearbyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby, container, false);
 
-        recyclerView = view.findViewById(R.id.nearbyFragmentRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mContext = getContext();
+        mActivity = requireActivity();
 
-        Location location = new Location(getContext());
-        location.getCurrentLocation(new Location.LocationCallback() {
+        nearbyFragmentDistanceTextView = view.findViewById(R.id.nearbyFragmentDistanceTextView);
+        nearbyFragmentDistanceSeekBar = view.findViewById(R.id.nearbyFragmentDistanceSeekBar);
+        nearbyFragmentConfirmButton = view.findViewById(R.id.nearbyFragmentConfirmButton);
+
+        nearbyFragmentRecyclerView = view.findViewById(R.id.nearbyFragmentRecyclerView);
+        nearbyFragmentSwipeRefreshLayout = view.findViewById(R.id.nearbyFragmentSwipeRefreshLayout);
+
+        nearbyFragmentRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mPostAdapter = new PostAdapter(mActivity, mContext);
+
+        nearbyFragmentRecyclerView.setAdapter(mPostAdapter);
+        // 加载初始页面
+        reloadPage();
+
+        // 拖动条获取数据
+        nearbyFragmentDistanceSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onLocationReceived(double latitude, double longitude, String province, String city, String address) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // 在这里获取选定的数字
+                mSeekbarNum = progress;
+                nearbyFragmentDistanceTextView.setText(String.valueOf(mSeekbarNum));
+            }
 
-                LocalUserInfo localUserInfo = new LocalUserInfo(requireContext());
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // 当用户开始滑动SeekBar时调用
+            }
 
-                // 获取地理位置之后才能发送数据请求
-                int page_num = 1;
-                int page_size = 10;
-                int distance = 10; // 10km
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // 当用户停止滑动SeekBar时调用
+            }
+        });
 
-                @SuppressLint("DefaultLocale")
-                String targetUrl = String.format("" +
-                                "http://121.43.110.176:8000/api/post?" +
-                                "page_num=%d&page_size=%d&location_x=%.2f&location_y=%.2f&distance=%d",
-                        page_num, page_size, longitude, latitude, distance);
-                System.out.println(targetUrl);
-
-                DataGetter.getDataFromServer(targetUrl, new DataGetter.DataGetterCallback() {
-                    @Override
-                    public void onSuccess(JSONObject jsonObject) {
-                        try {
-                            int code = jsonObject.getInt("code");
-                            String errorMsg = jsonObject.getString("error_msg");
-                            System.out.println("!!!our code :" + code);
-                            if (code != 0 && code != 1 && code != 2) {
-                                // 获取数据失败
-                                String msg = "error code:" + code + "\nerror_msg" + errorMsg;
-                                MyToast.show(getContext(),msg);
-                            } else {
-                                JSONObject data = jsonObject.getJSONObject("data");
-
-                                postList = new ArrayList<>(); // 初始化帖子数据列表
-                                processHomePost(data,postList);
-
-                                postAdapter = new PostAdapter(postList, new PostAdapter.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(Post post) {
-                                        // 处理点击事件，跳转到详情页或执行其他操作
-                                        // 在此处启动 PostDetailActivity，并传递帖子数据
-                                        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-                                        intent.putExtra("post_id", post.getId());
-                                        intent.putExtra("publisher_id",post.getUid());
-                                        startActivity(intent);
-                                    }
-                                });
-                                requireActivity().runOnUiThread(new Runnable() {
-                                    @SuppressLint("NotifyDataSetChanged")
-                                    @Override
-                                    public void run() {
-                                        // 更新UI组件的代码
-                                        postAdapter.notifyDataSetChanged();
-                                        recyclerView.setAdapter(postAdapter);
-                                    }
-                                });
-
-                            }
-                        } catch (JSONException e) {
-                            MyToast.show(getContext(), "JSON错误");
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        System.out.println(errorMessage);
-                        MyToast.show(getContext(), "网络请求错误");
-                    }
-                });
+        // 上拉到底部的时候加载更多
+        nearbyFragmentRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                // 加锁，免得同时访问太多
+                getMorePost();
 
             }
-            @Override
-            public void onLocationFailed(String errorMsg) {
-                System.out.println("Failed to get location: " + errorMsg);
+        });
 
+        // 下拉刷新
+        nearbyFragmentSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // 下拉刷新
+                reloadPage();
+            }
+        });
+
+        // 点击确定按钮
+        nearbyFragmentConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 确定按钮被点击时，才设置距离参数
+                mDistance = mSeekbarNum;
+                reloadPage();
             }
         });
 
         return view;
     }
-    public void processHomePost(JSONObject data, ArrayList<Post> postList) {
 
-        try {
+    private void reloadPage() {
+        synchronized (lock) {
+            // 在这里执行下拉刷新的操作，比如发送网络请求
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // 每次刷新最新内容，都会重置帖子列表
+                    mPostAdapter.getPostList().clear();
+                    page_num = 1;  // 恢复页码
 
-            JSONArray jsonArray = data.getJSONArray("items");
+                    int post_num = DataGetter.getLocationAndPostOverviewData(
+                            Objects.requireNonNull(mActivity), mPostAdapter,
+                            "", page_num, page_size, mDistance);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject item = jsonArray.getJSONObject(i);
-
-                // 获取条目的各个字段值
-                String id = item.getString("id");
-                String uid = item.getString("user_id");
-                String username = item.getString("username");
-                String user_picture = item.getString("user_picture");
-                String title = item.getString("title");
-                String text = item.getString("text");
-                String date = item.getString("date");
-                double location_x = item.getDouble("location_x");
-                double location_y = item.getDouble("location_y");
-                String ip_address = item.getString("ip_address");
-                String distance = item.getString("distance");
-
-                Post post = new Post(id, uid, username,user_picture, title, text, -1, "",date, location_x, location_y, ip_address, distance);
-                postList.add(post);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+                    // 恢复初始信息
+                    if (post_num == page_size) {
+                        page_num++;
+                    }
+                    // 当操作完成后，调用 setRefreshing(false) 来停止刷新动画
+                    nearbyFragmentSwipeRefreshLayout.setRefreshing(false);
+                }
+            }, 1000); // 延迟x毫秒后停止刷新
         }
-
     }
 
+    private void getMorePost() {
+        // 加锁，免得同时访问太多
+        synchronized (lock) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager) nearbyFragmentRecyclerView.getLayoutManager();
+            int totalItemCount = Objects.requireNonNull(layoutManager).getItemCount();
+            int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+            if (lastVisibleItemPosition == totalItemCount - 1) {
+                // 用户滑动到列表底部，加载下一页
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 加载更多数据完成后更新RecyclerView的适配器等操作
+                        int post_num = DataGetter.getLocationAndPostOverviewData(
+                                Objects.requireNonNull(mActivity), mPostAdapter,
+                                "", page_num, page_size, mDistance);
+                        if (post_num == page_size) {
+                            page_num++;
+                        }
+                        // 停止加载更多动画
+                        nearbyFragmentSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 1000);
+            }
+
+        }
+    }
 }

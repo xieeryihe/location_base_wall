@@ -221,8 +221,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                                     MyToast.show(context,msg);
                                 } else {
                                     MyToast.show(context, "删除评论成功");
-                                    mCommentList.remove(comment);
-                                    notifyDataSetChanged();
                                 }
                             } catch (JSONException e) {
                                 MyToast.show(context, "JSON错误");

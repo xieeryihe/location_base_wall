@@ -191,7 +191,6 @@ public class PostDetailActivity extends AppCompatActivity {
                         if (data != null) {
                             mCommentMediaUri = data.getData();
                             if (mCommentMediaUri != null) {
-                                System.out.println("在选图里面："+mCommentMediaUri);
                                 postDetailCommentImageView.setVisibility(View.VISIBLE);
                                 if (Media.isVideoFile(mContext, mCommentMediaUri)) {
                                     RequestOptions requestOptions = new RequestOptions()
@@ -377,8 +376,6 @@ public class PostDetailActivity extends AppCompatActivity {
             String user_id1 = localUserInfo1.getId();
 
             String targetUrl12 = String.format( "http://121.43.110.176:8000/api/post/?post_id=%s",post_id);
-            System.out.println("请求链接");
-            System.out.println(targetUrl12);
 
             MultipartBody.Builder putBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             MultipartBody.Builder postBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -387,8 +384,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
             // 如果为富文本，先使用Post请求发送媒体数据
             if(mEditMediaUri != null){
-                System.out.println("媒体数据");
-                System.out.println(mEditMediaUri);
                 String mediaUriStorage = Media.getImagePathFromUri(mContext, mEditMediaUri);
                 File file = new File(mediaUriStorage);
                 // 添加图片部分
@@ -449,8 +444,6 @@ public class PostDetailActivity extends AppCompatActivity {
             putBuilder.addFormDataPart("text", text);
             putBuilder.addFormDataPart("content_type",String.valueOf(mEditContentType));
 
-            System.out.println("修改的标题为" + title);
-            System.out.println("修改的文本为" + text);
             RequestBody putRequestBody = putBuilder.build();
 
             // 创建请求对象
@@ -533,8 +526,6 @@ public class PostDetailActivity extends AppCompatActivity {
                     MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                     String content_type = "0";
                     if (mCommentMediaUri != null){
-                        System.out.println("评论的uri为");
-                        System.out.println(mCommentMediaUri);
                         content_type = "1";
                         String mediaUriStorage = Media.getImagePathFromUri(mContext, mCommentMediaUri);
                         File file = new File(mediaUriStorage);
@@ -729,9 +720,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
 
                 } else if (Media.isVideoFile(media_url)) {
-                    // 文件是视频
-                    // 在主线程上加载视频缩略图并显示到ImageView
-                    System.out.println("是视频");
+                    // 文件是视频，在主线程上加载视频缩略图并显示到ImageView
 
                     runOnUiThread(() -> {
                         RequestOptions requestOptions = new RequestOptions()

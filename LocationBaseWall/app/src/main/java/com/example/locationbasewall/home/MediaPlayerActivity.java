@@ -54,16 +54,12 @@ public class MediaPlayerActivity extends AppCompatActivity implements Player.Eve
 
         mediaUrl = getIntent().getStringExtra("mediaUrl");
 
-        System.out.println(mediaUrl);
         if (Media.isImageFile(mediaUrl)) {
-            System.out.println("是图片");
             mediaPlayerImageView.setVisibility(View.VISIBLE);
             mPlayerView.setVisibility(View.GONE);
             Glide.with(this).load(mediaUrl).into(mediaPlayerImageView);
 
         } else {
-            System.out.println("是视频");
-
             mediaPlayerImageView.setVisibility(View.GONE);
             mPlayerView.setVisibility(View.VISIBLE);
 

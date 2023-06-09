@@ -42,6 +42,7 @@ import okhttp3.RequestBody;
 
 public class CommentDetailActivity extends AppCompatActivity {
     private Context mContext;
+
     private ImageView commentDetailUserImageView;
     private TextView commentDetailUsernameTextView;
     private TextView commentDetailIPTextView;
@@ -57,7 +58,7 @@ public class CommentDetailActivity extends AppCompatActivity {
     private Button commentDetailCommentButton;
 
     // 其他部分
-
+    private Comment mComment;  // 父评论
     private Uri mCommentMediaUri = null;  // 评论界面，上传媒体资源用到的uri
     private ActivityResultLauncher<Intent> commentGalleryLauncher;  // 评论的launcher
     private ArrayList<Comment> subcommentList; // 评论列表
@@ -87,16 +88,16 @@ public class CommentDetailActivity extends AppCompatActivity {
         commentDetailCommentButton = findViewById(R.id.commentDetailCommentButton);
 
 
-        Comment comment = (Comment) getIntent().getSerializableExtra("parentComment");
-        commentDetailUsernameTextView.setText(comment.getUsername());
-        commentDetailIPTextView.setText(comment.getIp_address());
-        commentDetailContentTextView.setText(comment.getText());
+        mComment = (Comment) getIntent().getSerializableExtra("parentComment");
+        commentDetailUsernameTextView.setText(mComment.getUsername());
+        commentDetailIPTextView.setText(mComment.getIp_address());
+        commentDetailContentTextView.setText(mComment.getText());
 
-        String parentImageUrl = comment.getUser_picture();
-        String parentMediaUrl = comment.getMedia_url();
+        String parentImageUrl = mComment.getUser_picture();
+        String parentMediaUrl = mComment.getMedia_url();
         LocalUserInfo localUserInfo = new LocalUserInfo(mContext);
         String user_id = localUserInfo.getId();
-        String comment_id = comment.getId();
+        String comment_id = mComment.getId();
 
 
         // 1. 父评论部分
@@ -117,7 +118,7 @@ public class CommentDetailActivity extends AppCompatActivity {
 
         // 1.2 获取评论媒体缩略图
 
-        if (comment.getContent_type().equals("1")){
+        if (mComment.getContent_type().equals("1")){
             if (Media.isImageFile(parentMediaUrl)) {
                 // 文件是图片
                 runOnUiThread(() -> {
@@ -165,7 +166,7 @@ public class CommentDetailActivity extends AppCompatActivity {
         @SuppressLint("DefaultLocale") String targetUrl = String.format("" +
                         "http://121.43.110.176:8000/api/subcomment?" +
                         "page_num=%d&page_size=%d&comment_id=%d",
-                page_num, page_size, Integer.valueOf(comment.getId()));
+                page_num, page_size, Integer.valueOf(mComment.getId()));
 
 
         DataGetter.getDataFromServer(targetUrl, new DataGetter.DataGetterCallback() {
@@ -301,6 +302,14 @@ public class CommentDetailActivity extends AppCompatActivity {
             // 设置评论为空
         });
 
+        // 4. 其余部分
+        // 缩略图点击效果
+        commentDetailMediaImageView.setOnClickListener(v -> {
+            String downloadMediaUrl = mComment.getMedia_url();
+            Intent intent = new Intent(mContext, MediaPlayerActivity.class);
+            intent.putExtra("mediaUrl", downloadMediaUrl);
+            startActivity(intent);
+        });
 
 
     }
