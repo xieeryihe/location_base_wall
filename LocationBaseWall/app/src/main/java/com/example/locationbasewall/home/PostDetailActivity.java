@@ -86,7 +86,7 @@ public class PostDetailActivity extends AppCompatActivity {
     // 非视图类资源
 
     private RecyclerView commentsRecycleView;
-    private ArrayList<Comment> commentList; // 评论列表（复用了Post的构造）
+    private ArrayList<Comment> commentList; // 评论列表
     private CommentAdapter commentAdapter;
 
     private Post mPost;
@@ -288,9 +288,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         commentList = new ArrayList<>(); // 初始化帖子数据列表
 
                         processComments(data,commentList);
-                        commentAdapter = new CommentAdapter(mContext,user_id, commentList, comment -> {
-                            // TODO 评论的点击事件
-                        });
+                        commentAdapter = new CommentAdapter(PostDetailActivity.this, mContext,user_id, commentList);
 
                         runOnUiThread(() -> {
                             // 更新UI组件的代码
@@ -678,8 +676,8 @@ public class PostDetailActivity extends AppCompatActivity {
             double location_x = data.getDouble("location_x");
             double location_y = data.getDouble("location_y");
             String ip_address = data.getString("ip_address");
-            String distance = data.getString("distance");
-            mPost = new Post(id, uid, username, user_picture, title, text, Integer.parseInt(content_type), media_url,date,location_x,location_y,ip_address, distance);
+            // String distance = data.getString("distance");
+            mPost = new Post(id, uid, username, user_picture, title, text, Integer.parseInt(content_type), media_url,date,location_x,location_y,ip_address, null);
             // 1. 展示文本信息
             runOnUiThread(() -> {
                 // 更新UI组件的代码

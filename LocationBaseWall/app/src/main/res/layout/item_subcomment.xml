@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/post_background"
+    android:layout_marginBottom="@dimen/small_margin"
+    >
+    <!--注意一定是wrap_content，否则就是一个元素占满整个屏幕，结果就是值显示一个元素-->
+    <LinearLayout
+        android:id="@+id/item_subcomment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/small_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                >
+
+                <ImageView
+                    android:id="@+id/subcommentUserImageView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.15"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/default_img" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="0.85"
+                    android:weightSum="1">
+                    <TextView
+                        android:id="@+id/subcommentUsernameTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/common_margin"
+                        android:layout_weight="0.5"
+                        android:text="username"
+                        android:textSize="@dimen/font_size_small"
+                        android:textStyle="bold"
+                        android:gravity="center_vertical"/>
+                    <TextView
+                        android:id="@+id/subcommentIPTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/common_margin"
+                        android:layout_weight="0.5"
+                        android:text="IP属地"
+                        android:textSize="@dimen/font_size_small"
+                        android:gravity="center_vertical"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/subcommentDeleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="删除评论"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/subcommentContentTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_margin"
+                android:textSize="@dimen/font_size_middle"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:text="comment"/>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/subcommentMediaImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/default_img"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:visibility="gone"
+            />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,5 +1,8 @@
 package com.example.locationbasewall.utils;
-public class Comment {
+
+import java.io.Serializable;
+
+public class Comment implements Serializable {
     private String id;  // 评论id
     private String user_id;  // 评论者的账户id
     private String username;

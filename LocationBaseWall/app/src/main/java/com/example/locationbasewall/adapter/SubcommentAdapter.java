@@ -1,11 +1,7 @@
 package com.example.locationbasewall.adapter;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -23,21 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.locationbasewall.MainActivity;
 import com.example.locationbasewall.R;
-import com.example.locationbasewall.home.CommentDetailActivity;
-import com.example.locationbasewall.home.HomeActivity;
-import com.example.locationbasewall.home.PostDetailActivity;
 import com.example.locationbasewall.utils.Comment;
 import com.example.locationbasewall.utils.DataSender;
 import com.example.locationbasewall.utils.MyToast;
-import com.example.locationbasewall.utils.Post;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -49,80 +39,65 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
-    private ArrayList<Comment> mCommentList;
-    private CommentAdapter.OnItemClickListener onItemClickListener;
-    private Activity mActivity;
+public class SubcommentAdapter extends RecyclerView.Adapter<SubcommentAdapter.SubcommentViewHolder> {
+    private ArrayList<Comment> mSubcommentList;
+    private SubcommentAdapter.OnItemClickListener onItemClickListener;
     private Context mContext;
     String mCurrentUid;
+
     public interface OnItemClickListener {
         void onItemClick(Comment comment);
     }
 
-    public CommentAdapter(Activity activity, Context context, String currentUid, ArrayList<Comment> CommentList) {
-        this.mActivity = activity;
+    public SubcommentAdapter(Context context, String currentUid, ArrayList<Comment> subcommentList) {
         this.mContext = context;
         this.mCurrentUid = currentUid;
-        this.mCommentList = CommentList;
-        this.onItemClickListener = new CommentAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Comment comment) {
-
-
-            }
-        };
-
+        this.mSubcommentList = subcommentList;
     }
 
     @NonNull
     @Override
-    public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_comment, parent, false);
-        return new CommentViewHolder(view, this.onItemClickListener);
+    public SubcommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_subcomment, parent, false);
+        return new SubcommentViewHolder(view, this.onItemClickListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
-        Comment comment = mCommentList.get(position);
+    public void onBindViewHolder(@NonNull SubcommentViewHolder holder, int position) {
+        Comment comment = mSubcommentList.get(position);
         holder.bind(comment);
     }
 
     @Override
     public int getItemCount() {
-        return mCommentList.size();
+        return mSubcommentList.size();
     }
 
-    public class CommentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private LinearLayout item_comment;
-        private ImageView commentUserImageView;
-        private TextView commentUsernameTextView;
-        private TextView commentIPTextView;
-        private TextView commentContentTextView;
-        private ImageView commentMediaImageView;
-        private Button commentDeleteButton;
+    public class SubcommentViewHolder extends RecyclerView.ViewHolder {
+        private LinearLayout item_subcomment;
+        private ImageView subcommentUserImageView;
+        private TextView subcommentUsernameTextView;
+        private TextView subcommentIPTextView;
+        private TextView subcommentContentTextView;
+        private ImageView subcommentMediaImageView;
+        private Button subcommentDeleteButton;
 
-        private CommentAdapter.OnItemClickListener onItemClickListener;
-
-        public CommentViewHolder(@NonNull View itemView, CommentAdapter.OnItemClickListener onItemClickListener) {
+        public SubcommentViewHolder(@NonNull View itemView, SubcommentAdapter.OnItemClickListener onItemClickListener) {
             super(itemView);
-            item_comment = itemView.findViewById(R.id.item_comment);
-            commentUserImageView = itemView.findViewById(R.id.commentUserImageView);
-            commentUsernameTextView = itemView.findViewById(R.id.commentUsernameTextView);
-            commentIPTextView = itemView.findViewById(R.id.commentIPTextView);
-            commentContentTextView = itemView.findViewById(R.id.commentContentTextView);
-            commentMediaImageView = itemView.findViewById(R.id.commentMediaImageView);
-            commentDeleteButton = itemView.findViewById(R.id.commentDeleteButton);
-
-            this.onItemClickListener = onItemClickListener;
-            itemView.setOnClickListener(this);
-
+            item_subcomment = itemView.findViewById(R.id.item_subcomment);
+            subcommentUserImageView = itemView.findViewById(R.id.subcommentUserImageView);
+            subcommentUsernameTextView = itemView.findViewById(R.id.subcommentUsernameTextView);
+            subcommentIPTextView = itemView.findViewById(R.id.subcommentIPTextView);
+            subcommentContentTextView = itemView.findViewById(R.id.subcommentContentTextView);
+            subcommentMediaImageView = itemView.findViewById(R.id.subcommentMediaImageView);
+            subcommentDeleteButton = itemView.findViewById(R.id.subcommentDeleteButton);
         }
 
         public void bind(Comment comment) {
-            if (mCurrentUid.equals(comment.getUser_id())){
-                commentDeleteButton.setVisibility(View.VISIBLE);
-            }else {
-                commentDeleteButton.setVisibility(View.GONE);
+            if (mCurrentUid.equals(comment.getUser_id())) {
+                subcommentDeleteButton.setVisibility(View.VISIBLE);
+            } else {
+                subcommentDeleteButton.setVisibility(View.GONE);
             }
 
             String user_picture = comment.getUser_picture();
@@ -145,14 +120,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                commentUserImageView.setImageBitmap(bitmap);
-                                commentUsernameTextView.setText(comment.getUsername());
-                                commentIPTextView.setText(comment.getIp_address());
-                                commentContentTextView.setText(comment.getText());
+                                subcommentUserImageView.setImageBitmap(bitmap);
+                                subcommentUsernameTextView.setText(comment.getUsername());
+                                subcommentIPTextView.setText(comment.getIp_address());
+                                subcommentContentTextView.setText(comment.getText());
                             }
                         });
                     }
                 }
+
                 @Override
                 public void onFailure(Call call, IOException e) {
                     // 请求失败处理
@@ -160,17 +136,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 }
             });
 
-
-            if (mediaUrl != null && !mediaUrl.equals("")){
+            if (mediaUrl != null && !mediaUrl.equals("")) {
                 Handler handler = new Handler(Looper.getMainLooper());
-                commentMediaImageView.setVisibility(View.VISIBLE);
+                subcommentMediaImageView.setVisibility(View.VISIBLE);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         System.out.println("加载评论图片");
                         System.out.println(mediaUrl);
-                        int targetWidth = commentMediaImageView.getWidth();
-                        int targetHeight = commentMediaImageView.getHeight();
+                        int targetWidth = subcommentMediaImageView.getWidth();
+                        int targetHeight = subcommentMediaImageView.getHeight();
                         RequestOptions requestOptions = new RequestOptions()
                                 .centerCrop() // 根据需要进行裁剪或缩放
                                 .override(targetWidth, targetHeight); // 设置图片大小为ImageView的大小
@@ -178,22 +153,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         Glide.with(mContext)
                                 .load(mediaUrl)
                                 .apply(requestOptions)
-                                .into(commentMediaImageView);
+                                .into(subcommentMediaImageView);
                     }
                 });
-            }else {
-                commentMediaImageView.setVisibility(View.GONE);
+            } else {
+                subcommentMediaImageView.setVisibility(View.GONE);
             }
 
-            // 点击评论的时候，可以回复评论
-            item_comment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
             // 设置删除逻辑
-            commentDeleteButton.setOnClickListener(new View.OnClickListener() {
+            subcommentDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String user_id = comment.getUser_id();
@@ -215,14 +183,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                             try {
                                 int code = jsonObject.getInt("code");
                                 String errorMsg = jsonObject.getString("error_msg");
-                                if (code != 0){
-
+                                if (code != 0) {
                                     String msg = "error code:" + code + "\nerror_msg" + errorMsg;
-                                    MyToast.show(context,msg);
+                                    MyToast.show(context, msg);
                                 } else {
                                     MyToast.show(context, "删除评论成功");
-                                    mCommentList.remove(comment);
-                                    notifyDataSetChanged();
                                 }
                             } catch (JSONException e) {
                                 MyToast.show(context, "JSON错误");
@@ -238,27 +203,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     });
                 }
             });
-
-            // 点击评论，跳到页面
-            item_comment.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mActivity, CommentDetailActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  // 用一个新的任务栈存储新的activity
-                    intent.putExtra("parentComment", (Serializable) comment);
-                    mContext.startActivity(intent);
-                }
-            });
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                Comment comment = mCommentList.get(position);
-                onItemClickListener.onItemClick(comment);
-            }
         }
     }
 }

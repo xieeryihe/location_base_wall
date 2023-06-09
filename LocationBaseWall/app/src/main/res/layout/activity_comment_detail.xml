@@ -1,9 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.CommentDetailActivity">
+    android:padding="@dimen/common_padding"
+    android:orientation="vertical"
+    android:background="@color/slight_gray">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/item_post"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:layout_weight="1">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            >
+
+            <ImageView
+                android:id="@+id/commentDetailUserImageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.15"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/default_img" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="0.85"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/commentDetailUsernameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical"
+                    android:paddingStart="@dimen/common_margin"
+                    android:text="丁真"
+                    android:textSize="@dimen/font_size_middle_small" />
+
+                <TextView
+                    android:id="@+id/commentDetailIPTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/common_margin"
+                    android:layout_weight="0.5"
+                    android:text="IP属地：妈妈"
+                    android:textSize="@dimen/font_size_middle_small"
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/commentDetailSavePostButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="保存"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/commentDetailCancelPostButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/small_margin"
+                android:layout_gravity="center"
+                android:text="取消"
+                android:visibility="gone"/>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/gray"
+            android:layout_marginTop="@dimen/small_margin"
+
+            />
+        <TextView
+            android:id="@+id/commentDetailTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textSize="@dimen/font_size_middle_big"
+            android:text="title"
+            android:textStyle="bold"/>
+        <EditText
+            android:id="@+id/commentDetailTitleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textSize="@dimen/font_size_middle_big"
+            android:text="title"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/commentDetailContentTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/common_margin"
+                    android:textSize="@dimen/font_size_middle"
+                    android:minLines="3"
+                    android:text="content"/>
+                <EditText
+                    android:id="@+id/commentDetailContentEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/common_margin"
+                    android:textSize="@dimen/font_size_middle"
+                    android:minLines="3"
+                    android:text="content"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/commentDetailMediaImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/default_img"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@color/gray"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/subcommentRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/post_background"
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:orientation="vertical"
+            android:layout_gravity="bottom">
+
+            <EditText
+                android:id="@+id/commentDetailCommentEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="评论一下..."
+                android:imeOptions="actionDone"
+                android:inputType="textMultiLine"
+                android:maxLines="3"
+                android:minHeight="48dp"
+                />
+
+            <ImageView
+                android:id="@+id/commentDetailCommentImageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/default_img"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.2"
+            android:orientation="vertical"
+            >
+
+            <Button
+                android:id="@+id/commentDetailCommentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="评论"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
