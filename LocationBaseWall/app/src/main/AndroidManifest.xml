@@ -31,6 +31,9 @@
         android:theme="@style/Theme.LocationBaseWall"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".home.CommentDetailActivity"
+            android:exported="false" />
 
         <service android:name="com.amap.api.location.APSService" /> <!-- 设置高德Key -->
         <!-- 笔记本上的调试key -->

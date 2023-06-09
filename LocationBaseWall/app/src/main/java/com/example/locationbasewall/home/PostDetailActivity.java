@@ -678,8 +678,8 @@ public class PostDetailActivity extends AppCompatActivity {
             double location_x = data.getDouble("location_x");
             double location_y = data.getDouble("location_y");
             String ip_address = data.getString("ip_address");
-
-            mPost = new Post(id, uid, username, user_picture, title, text, Integer.parseInt(content_type), media_url,date,location_x,location_y,ip_address);
+            String distance = data.getString("distance");
+            mPost = new Post(id, uid, username, user_picture, title, text, Integer.parseInt(content_type), media_url,date,location_x,location_y,ip_address, distance);
             // 1. 展示文本信息
             runOnUiThread(() -> {
                 // 更新UI组件的代码

@@ -15,9 +15,11 @@ public class Post {
     private double location_y;
     private String address;
 
+    private String distance;
+
     private byte[] imageData;
 
-    public Post(String id, String uid, String username, String imageUrl, String title, String text, int content_type, String mediaUrl,String date, double location_x, double location_y, String address) {
+    public Post(String id, String uid, String username, String imageUrl, String title, String text, int content_type, String mediaUrl,String date, double location_x, double location_y, String address, String distance) {
         this.id = id;
         this.uid = uid;
         this.username = username;
@@ -30,6 +32,7 @@ public class Post {
         this.location_x = location_x;
         this.location_y = location_y;
         this.address = address;
+        this.distance = distance;
 
     }
 
@@ -87,6 +90,9 @@ public class Post {
 
     public String getAddress() {
         return address;
+    }
+    public String getDistance() {
+        return distance;
     }
 
     public void setImageData(byte[] imageData){

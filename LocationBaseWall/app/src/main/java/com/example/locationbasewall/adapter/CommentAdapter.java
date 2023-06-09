@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -74,6 +75,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     public class CommentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private LinearLayout item_comment;
         private ImageView commentUserImageView;
         private TextView commentUsernameTextView;
         private TextView commentIPTextView;
@@ -85,6 +87,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         public CommentViewHolder(@NonNull View itemView, CommentAdapter.OnItemClickListener onItemClickListener) {
             super(itemView);
+            item_comment = itemView.findViewById(R.id.item_comment);
             commentUserImageView = itemView.findViewById(R.id.commentUserImageView);
             commentUsernameTextView = itemView.findViewById(R.id.commentUsernameTextView);
             commentIPTextView = itemView.findViewById(R.id.commentIPTextView);
@@ -165,6 +168,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 commentMediaImageView.setVisibility(View.GONE);
             }
 
+            // 点击评论的时候，可以回复评论
+            item_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
             // 设置删除逻辑
             commentDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override

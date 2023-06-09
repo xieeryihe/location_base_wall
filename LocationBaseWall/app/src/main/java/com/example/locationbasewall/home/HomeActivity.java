@@ -38,8 +38,6 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
 
-            // TODO 切换Fragment的时候，原来的数据就被清除了，尤其是PostFragment的信息，不想被清除
-            // TODO 当然，PostFragment中可以加一个清除数据的按钮（后面再说）
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     selectedFragment = getSupportFragmentManager().findFragmentByTag("home");

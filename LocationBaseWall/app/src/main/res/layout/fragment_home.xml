@@ -9,14 +9,31 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Home 帖子列表"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:padding="16dp" />
+            android:layout_margin="@dimen/small_margin"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/homeFragmentSearchEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/SearchEditTextStyle"
+                android:hint="请输入关键词"
+                android:inputType="text"
+                android:maxLines="1"
+                android:minHeight="48dp" />
+
+            <Button
+                android:id="@+id/homeFragmentSearchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                android:text="搜索" />
+
+        </LinearLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/homeFragmentSwipeRefreshLayout"

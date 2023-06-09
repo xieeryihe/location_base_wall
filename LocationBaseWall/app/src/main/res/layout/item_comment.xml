@@ -9,13 +9,13 @@
     >
     <!--注意一定是wrap_content，否则就是一个元素占满整个屏幕，结果就是值显示一个元素-->
     <LinearLayout
+        android:id="@+id/item_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginBottom="@dimen/small_margin">
 
         <LinearLayout
-            android:id="@+id/item_post"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">

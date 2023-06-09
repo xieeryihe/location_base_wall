@@ -142,8 +142,9 @@ public class NearbyFragment extends Fragment {
                 double location_x = item.getDouble("location_x");
                 double location_y = item.getDouble("location_y");
                 String ip_address = item.getString("ip_address");
-                System.out.println(user_picture);
-                Post post = new Post(id, uid, username,user_picture, title, text, -1, "",date, location_x, location_y, ip_address);
+                String distance = item.getString("distance");
+
+                Post post = new Post(id, uid, username,user_picture, title, text, -1, "",date, location_x, location_y, ip_address, distance);
                 postList.add(post);
             }
 

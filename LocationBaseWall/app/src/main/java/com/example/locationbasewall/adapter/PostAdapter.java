@@ -24,7 +24,6 @@ import com.example.locationbasewall.utils.Post;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -92,6 +91,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private ImageView postOverviewImageView;
         private TextView postOverviewUsernameTextView;
         private TextView postOverviewIPTextView;
+        private TextView postOverviewDateTextView;
+        private TextView postOverviewDistanceTextView;
+
         private TextView titleTextView;
         private TextView contentTextView;
         private OnItemClickListener onItemClickListener;
@@ -101,6 +103,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             postOverviewImageView = itemView.findViewById(R.id.postOverviewImageView);
             postOverviewUsernameTextView = itemView.findViewById(R.id.postOverviewUsernameTextView);
             postOverviewIPTextView = itemView.findViewById(R.id.postOverviewIPTextView);
+            postOverviewDateTextView = itemView.findViewById(R.id.postOverviewDateTextView);
+            postOverviewDistanceTextView = itemView.findViewById(R.id.postOverviewDistanceTextView);
             titleTextView = itemView.findViewById(R.id.postOverviewTitleTextView);
             contentTextView = itemView.findViewById(R.id.postOverviewContentTextView);
 
@@ -133,7 +137,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             public void run() {
                                 postOverviewImageView.setImageBitmap(bitmap);
                                 postOverviewUsernameTextView.setText(post.getUsername());
-                                postOverviewIPTextView.setText(String.format("%s %s", post.getAddress(), post.getDate()));
+                                postOverviewIPTextView.setText(post.getAddress());
+                                postOverviewDateTextView.setText(post.getDate());
+                                postOverviewDistanceTextView.setText(String.format("%s km", post.getDistance()));
+
                                 titleTextView.setText(post.getTitle());
                                 contentTextView.setText(post.getText());
                             }
@@ -142,7 +149,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     }
                 }
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     // 请求失败处理
                     e.printStackTrace();
                 }
